@@ -25,31 +25,38 @@ router.get('/tunnelbana/:line', function(req, res, next) {
 });
 
 router.get('/blocket/', function(req, res, next) {
+    // just returns everything
+    db.allAdsWithCoordinates(function(err, results){
+        res.json(results);
+    });
+});
+
+router.get('/blocket/debug/', function(req, res, next) {
+    // just returns everything
     db.allAds(function(err, results){
-        results.sort(function(a,b){
-            return a.time < b.time;
-        });
-        // remove description
-        for ( var r in results ) {
-            delete results[r].description;
-        }
-        res.json(results.slice(0,500));
+        res.json(results);
     });
 });
 
 router.get('/blocket/statistics/', function(req, res, next) {
     db.allAds(function(err, results){
         var withAddress = 0;
+        var withCoordinates = 0;
         var stats = {};
 
         for ( var i in results ) {
             if ( 'address' in results[i] ) {
                 withAddress++;
             }
+
+            if ( 'latitude' in results[i] ) {
+                withCoordinates++;
+            }
         }
 
         stats.total = results.length;
         stats.withAddress = withAddress;
+        stats.withCoordinates = withCoordinates;
 
         res.json(stats);
     });

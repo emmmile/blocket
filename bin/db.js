@@ -56,10 +56,20 @@ module.exports = {
         });
 
         db.save(ad, 'Ad', function(err, node) {
-                // catch
+            if ( err ) throw err;
         });
     },
     allAds: function ( callback ) {
-        db.nodesWithLabel('Ad', callback);
+        db.nodesWithLabel('Ad', function(err, results){
+            callback(err,results);
+        });
+    },
+    allAdsWithCoordinates: function ( callback ) {
+        var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n.latitude AS latitude, " +
+            "n.longitude AS longitude, n.uri AS uri, n.title AS title, n.image AS image;";
+
+        db.query(cypher, function(err, results) {
+            callback(err,results);
+        });
     }
 };

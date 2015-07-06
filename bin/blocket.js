@@ -6,7 +6,7 @@ var ent = require('ent');
 var db = require('./db');
 var Xray = require('x-ray');
 var x = Xray();
-x.concurrency(5);
+x.concurrency(1);
 
 function cleanAd ( ad ) {
     // remove null entries
@@ -24,13 +24,25 @@ function cleanAd ( ad ) {
         ad.image = ad.image.replace(/background-image: url\(/i, "").replace(/\);/i, "");
     }
 
+    if ( ad.coordinates ) {
+        var groups = /(\d\d\.\d\d\d+):(\d\d\.\d\d\d+)/i.exec(ad.coordinates);
+        ad.latitude = groups[1] - 0;
+        ad.longitude = groups[2] - 0;
+
+        delete ad.coordinates;
+    }
+
+    ad.time = new Date(ad.time).getTime();
+
+    console.log(ad.title);
     return ad;
 }
 
 function singlePage (ad, attempt) {
     x(ad.uri, '#blocket_content',[{
         address: 'ul.body-links h3.h5',
-        description: 'p.object-text'
+        description: 'p.object-text',
+        coordinates: 'a.map-wrapper img@src'
     }])(function(err,results){
         if (err) {
             if ( attempt == 3 )
@@ -42,8 +54,8 @@ function singlePage (ad, attempt) {
 
         ad.description = results[0].description;
         ad.address = results[0].address;
+        ad.coordinates = results[0].coordinates;
         ad = cleanAd(ad);
-        console.log(ad.title);
 
         db.insertAd(ad);
     });
@@ -92,7 +104,7 @@ function scrapeIndexRecursive(page, end, attempts, results, callback) {
 
 module.exports = {
     scrape: function(){
-        scrapeIndex(1, 5, 0, function (err, ads) {
+        scrapeIndex(1, 20, 0, function (err, ads) {
             if (err) throw err;
 
             console.log("Downloaded " + ads.length + " ad stubs.");
