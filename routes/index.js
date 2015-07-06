@@ -9,7 +9,7 @@ var db = require('../bin/db');
 //});
 
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Blocket Stockholm' });
 });
 
 router.get('/tunnelbana/', function(req, res, next) {
