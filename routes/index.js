@@ -25,7 +25,6 @@ router.get('/tunnelbana/:line', function(req, res, next) {
 });
 
 router.get('/blocket/', function(req, res, next) {
-    // just returns everything
     db.allAdsWithCoordinates(function(err, results){
         res.json(results);
     });

@@ -5,8 +5,9 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('google-apis:server');
+var debug = require('debug')('blocket:server');
 var http = require('http');
+var CronJob = require('cron').CronJob;
 
 /**
  * Get port from environment and store in Express.
@@ -28,6 +29,11 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+new CronJob('0 * * * * *', function() {
+    var blokcket = require('./blocket');
+    blokcket.scrape();
+}, null, true, 'Europe/Rome');
+
 
 /**
  * Normalize a port into a number, string, or false.

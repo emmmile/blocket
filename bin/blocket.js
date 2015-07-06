@@ -2,6 +2,8 @@
  * Created by edt on 7/3/15.
  */
 
+
+var winston = require('winston');
 var ent = require('ent');
 var db = require('./db');
 var Xray = require('x-ray');
@@ -34,7 +36,7 @@ function cleanAd ( ad ) {
 
     ad.time = new Date(ad.time).getTime();
 
-    console.log(ad.title);
+    winston.log("info", "scraped and cleaned new ad", ad);
     return ad;
 }
 
@@ -57,6 +59,7 @@ function singlePage (ad, attempt) {
         ad.coordinates = results[0].coordinates;
         ad = cleanAd(ad);
 
+        winston.log("debug", "inserted ad in DB");
         db.insertAd(ad);
     });
 }
@@ -67,7 +70,7 @@ function scrapeIndex(start, end, attempts, callback) {
 }
 
 function scrapeIndexRecursive(page, end, attempts, results, callback) {
-    console.log("Downloading page " + page + " (attempt: " + attempts + ")");
+    //console.log("Downloading page " + page + " (attempt: " + attempts + ")");
 
     x('http://www.blocket.se/bostad/uthyres/stockholm?o='+ page +'&f=p&f=c&f=b', '.media', [{
         uri: '.item_link@href',
@@ -104,10 +107,10 @@ function scrapeIndexRecursive(page, end, attempts, results, callback) {
 
 module.exports = {
     scrape: function(){
-        scrapeIndex(1, 20, 0, function (err, ads) {
+        scrapeIndex(1, 3, 0, function (err, ads) {
             if (err) throw err;
 
-            console.log("Downloaded " + ads.length + " ad stubs.");
+            winston.log("info", "downloaded " + ads.length + " ads");
 
             db.allAds(function (err, dbAds) {
                 // create associative map, for efficient lookup
@@ -126,7 +129,7 @@ module.exports = {
                     }
                 }
 
-                console.log("Inserting " + inserted + " ads in the DB.");
+                winston.log("info", "there are " + inserted + " ads that have to be scraped");
             });
         });
     }

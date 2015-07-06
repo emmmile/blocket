@@ -41,8 +41,11 @@ function setMarkers(map, locations, key, markerIcon) {
             var content = "<h3>"+ locations[i][key] +"</h3>";
             if ( 'uri' in locations[i] ) {
                 content = '<a href="'+ locations[i].uri +'"><h3>' + locations[i][key] + '</h3></a>';
-                if ( 'image' in locations[i] && locations[i].image != null )
+                if ( 'image' in locations[i] )
                     content += '<img src="'+ locations[i].image +'">';
+
+                if ( 'price' in locations[i] )
+                    content += '<p>'+ locations[i].price +'</p>';
             }
 
             makeInfoWindowEvent(map, infowindow, content, marker);

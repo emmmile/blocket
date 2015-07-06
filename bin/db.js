@@ -30,6 +30,7 @@ module.exports = {
     allStationsOnLine: function ( line, callback ) {
         db.nodesWithLabel('Station', function(err, results){
             var filtered = [];
+            var associative = {}; // line -> obj
 
             if ( line in lines ) {
                 for (var r in results) {
@@ -66,9 +67,18 @@ module.exports = {
     },
     allAdsWithCoordinates: function ( callback ) {
         var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n.latitude AS latitude, " +
-            "n.longitude AS longitude, n.uri AS uri, n.title AS title, n.image AS image;";
+            "n.longitude AS longitude, n.uri AS uri, n.title AS title, n.image AS image, " +
+            "n.price AS price;";
 
         db.query(cypher, function(err, results) {
+            for ( var i in results ) {
+                for ( var j in results[i] ) {
+                    if ( results[i][j] == null ) {
+                        delete results[i][j];
+                    }
+                }
+            }
+
             callback(err,results);
         });
     }

@@ -1,5 +1,5 @@
 {
-  "name": "google-apis",
+  "name": "blocket",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -16,14 +16,15 @@
     "geolib": "2.0.17",
     "hbs": "~2.9.0",
     "html-entities": "^1.1.2",
-    "mocha": "*",
     "morgan": "~1.5.3",
     "nodemw": "0.6.1",
     "noodlejs": "*",
     "seraph": "0.13.1",
     "serve-favicon": "~2.2.1",
     "should": ">= 0.0.1",
-    "ent": "~2.2.0"
+    "ent": "~2.2.0",
+    "cron": "~1.0.9",
+    "winston": "~1.0.1"
   },
   "devDependencies": {
     "mocha": "^2.2.5"
