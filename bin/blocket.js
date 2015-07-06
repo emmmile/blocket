@@ -1,0 +1,121 @@
+/**
+ * Created by edt on 7/3/15.
+ */
+
+var ent = require('ent');
+var db = require('./db');
+var Xray = require('x-ray');
+var x = Xray();
+x.concurrency(5);
+
+function cleanAd ( ad ) {
+    // remove null entries
+    for (var i in ad) {
+        if (ad[i] === null || ad[i] === undefined) {
+            // test[i] === undefined is probably not very useful here
+            delete ad[i];
+        } else {
+            ad[i] = ent.decode(ad[i]);
+            ad[i] = ad[i].replace(/[\t\n]/g, "").trim();
+        }
+    }
+
+    if ( ad.image ) {
+        ad.image = ad.image.replace(/background-image: url\(/i, "").replace(/\);/i, "");
+    }
+
+    return ad;
+}
+
+function singlePage (ad, attempt) {
+    x(ad.uri, '#blocket_content',[{
+        address: 'ul.body-links h3.h5',
+        description: 'p.object-text'
+    }])(function(err,results){
+        if (err) {
+            if ( attempt == 3 )
+                return;
+
+            singlePage(ad, ++attempt);
+            return;
+        }
+
+        ad.description = results[0].description;
+        ad.address = results[0].address;
+        ad = cleanAd(ad);
+        console.log(ad.title);
+
+        db.insertAd(ad);
+    });
+}
+
+
+function scrapeIndex(start, end, attempts, callback) {
+    scrapeIndexRecursive(start, end, attempts, [], callback);
+}
+
+function scrapeIndexRecursive(page, end, attempts, results, callback) {
+    console.log("Downloading page " + page + " (attempt: " + attempts + ")");
+
+    x('http://www.blocket.se/bostad/uthyres/stockholm?o='+ page +'&f=p&f=c&f=b', '.media', [{
+        uri: '.item_link@href',
+        title: '.item_link@html',
+        image: 'a.media-object@style',
+        time: 'time@datetime',
+        rooms: '.li_detail_params.first.rooms@html',
+        price: '.li_detail_params.monthly_rent@html',
+        size: '.li_detail_params.size@html',
+        area: '.subject-param.address.separator',
+        type: '.subject-param.category'
+    }])(function(err, res) {
+        if (err) {
+            // TODO depending on the error, not always!!
+            if (attempts == 5)
+                throw err;
+
+            if (page < end) {
+                scrapeIndexRecursive(page, end, ++attempts, results, callback);
+            }
+            return;
+        }
+
+        for ( var i in res )
+            results.push(res[i]);
+
+        if ( ++page <= end )
+            scrapeIndexRecursive(page, end, 0, results, callback);
+        else
+            callback(err, results);
+    });
+}
+
+
+module.exports = {
+    scrape: function(){
+        scrapeIndex(1, 5, 0, function (err, ads) {
+            if (err) throw err;
+
+            console.log("Downloaded " + ads.length + " ad stubs.");
+
+            db.allAds(function (err, dbAds) {
+                // create associative map, for efficient lookup
+                var associative = {};
+                for (var i in dbAds) {
+                    associative[dbAds[i].uri] = dbAds[i];
+                }
+
+                var inserted = 0;
+                for (var i in ads) {
+                    if (ads[i].uri in associative) {
+                        // skip
+                    } else {
+                        singlePage(ads[i], 0);
+                        inserted++;
+                    }
+                }
+
+                console.log("Inserting " + inserted + " ads in the DB.");
+            });
+        });
+    }
+};
