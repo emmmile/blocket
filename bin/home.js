@@ -29,7 +29,7 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-new CronJob('0 * * * * *', function() {
+new CronJob('0 */5 * * * *', function() {
     var blokcket = require('./blocket');
     blokcket.scrape();
 }, null, true, 'Europe/Rome');
