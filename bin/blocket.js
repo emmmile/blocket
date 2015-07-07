@@ -36,7 +36,7 @@ function cleanAd ( ad ) {
 
     ad.time = new Date(ad.time).getTime();
 
-    winston.log("info", "scraped and cleaned new ad", ad);
+    winston.log("info", "scraped and cleaned new ad", ad.uri);
     return ad;
 }
 

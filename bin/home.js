@@ -30,8 +30,8 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 new CronJob('0 */5 * * * *', function() {
-    var blokcket = require('./blocket');
-    blokcket.scrape();
+    var index = require('./index');
+    index.index();
 }, null, true, 'Europe/Rome');
 
 

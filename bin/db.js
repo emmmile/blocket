@@ -2,7 +2,8 @@
  * Created by edt on 7/2/15.
  */
 
-config = require('../config');
+var config = require('../config');
+var exists = require('./exists');
 
 db = require("seraph")({
     server: config.db.host + ":" + config.db.port,
@@ -80,6 +81,14 @@ module.exports = {
             }
 
             callback(err,results);
+        });
+    },
+    // not sure this is the rigth place for this procedure
+    clean: function ( ) {
+        db.nodesWithLabel('Ad', function(err, results) {
+            for (var i in results) {
+                exists.check(results[i].uri);
+            }
         });
     }
 };
