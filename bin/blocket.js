@@ -107,7 +107,7 @@ function scrapeIndexRecursive(page, end, attempts, results, callback) {
 
 module.exports = {
     scrape: function(){
-        scrapeIndex(1, 3, 0, function (err, ads) {
+        scrapeIndex(1, 10, 0, function (err, ads) {
             if (err) throw err;
 
             winston.log("info", "downloaded " + ads.length + " ads");

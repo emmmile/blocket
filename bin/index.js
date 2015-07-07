@@ -19,12 +19,11 @@ var db = require('./db');
 //    tunnelbana.downloadStationsFromCategory('Stockholm_metro_stations', stations, dumpStation);
 //});
 
-        db.clean();
 
 module.exports = {
     index: function ( ) {
-        blocket.scrape();
-
         db.clean();
+
+        blocket.scrape();
     }
 };
