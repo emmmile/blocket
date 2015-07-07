@@ -2,6 +2,7 @@
  * Created by edt on 7/2/15.
  */
 
+var winston = require('winston');
 var config = require('../config');
 var exists = require('./exists');
 
@@ -83,12 +84,43 @@ module.exports = {
             callback(err,results);
         });
     },
+    deleteAdByUri: function (uri) {
+        winston.log("info", "deleting uri ", uri );
+
+        db.find({uri: uri}, false, 'Ad', function (err, objs) {
+            if (err) {
+                winston.log('error', "unable to find node with uri ", uri);
+                return;
+            }
+
+            if (objs.length != 1) {
+                winston.log('error', "more than one node with uri ", uri);
+                throw { reason: "wtf" };
+            }
+
+            db.delete(objs[0].id, function(err) {
+                if (err) {
+                    winston.log('error', "unable to delete node with uri ", uri);
+                }
+            })
+        });
+    },
     // not sure this is the rigth place for this procedure
     clean: function ( ) {
         db.nodesWithLabel('Ad', function(err, results) {
-            for (var i in results) {
-                exists.check(results[i].uri);
+            var uris = [];
+            for ( var i in results ) {
+                uris.push(results[i].uri);
             }
+
+            winston.log("info", "checking " + results.length + " uris");
+            exists.checkAll(uris.reverse(), function(resultsMap){
+                for ( var i in resultsMap ) {
+                    if ( !resultsMap[i] ) {
+                        module.exports.deleteAdByUri(i);
+                    }
+                }
+            });
         });
     }
 };

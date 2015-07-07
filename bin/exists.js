@@ -6,66 +6,58 @@ var winston = require('winston');
 var http = require('http');
 var request = require("request");
 
-var myPool = new http.Agent();
-myPool.maxSockets = 5;
+var connectionPool = new http.Agent();
+connectionPool.maxSockets = 5;
 
-function exists ( uri ) {
-    //
-    //var groups = /https?:\/\/([^\/]+)(\/.*)/i.exec(uri);
-    //var left = groups[1];
-    //var right = groups[2];
-    //
-    //winston.log('info', right);
-    //winston.log('info', left);
-    //
-    //var options = {
-    //    method: 'HEAD',
-    //    host: left,
-    //    port: 80,
-    //    path: right
-    //};
-    //
-    //var req = http.request(options, function (response) {
-    //    winston.log('info', "response ", response.headers);
-    //});
-    //
-    //req.on('socket', function (socket) {
-    //    socket.setTimeout(1000);
-    //    socket.on('timeout', function() {
-    //        winston.log('info', "INCREDIBLE");
-    //        req.abort();
-    //    });
-    //});
-    //
-    //req.on('error', function(err){
-    //    if ( attempt < maximumAttempts ) {
-    //        winston.log('info', "fucking js ", uri);
-    //        exists(uri, ++attempt);
-    //    } else {
-    //        winston.log('info', "uri probably does not exists: ", uri);
-    //    }
-    //});
+var waitingTime = 200; // waiting time between one connection and the other
 
+function makeOptions ( uri ) {
+    return {
+        uri: uri,
+        method: "HEAD",
+        timeout: 10000,
+        followRedirect: true,
+        maxRedirects: 10,
+        pool: connectionPool
+    };
+}
 
-    request({
-      uri: uri,
-      method: "HEAD",
-      timeout: 1000,
-      followRedirect: true,
-      maxRedirects: 10,
-        pool: myPool,
-    }, function(error, response, body) {
+function exists ( uri, callback ) {
+    request(makeOptions(uri), function(error, response, body) {
         if (error) {
-            //winston.log("info", error);
-            exists(uri);
+            if ( error.code != 'ENOTFOUND' )
+                exists(uri, callback);
+            else {
+                winston.log('info', {status: "NOT FOUND", uri: uri});
+                callback(uri, false);
+            }
             return;
         }
 
-        //if ( response.statusCode != 200 )
-            winston.log('info', {uri: uri, status: response.statusCode});
+        winston.log('info', {status: "OK", uri: uri});
+        callback(uri, true);
     });
 }
 
+function existsWrapper ( uris, index, resultMap, done ) {
+    if ( index >= uris.length ) {
+        done(resultMap);
+        return;
+    }
+
+    exists(uris[index], function(uri, outcome){
+        resultMap[uri] = outcome;
+        setTimeout(function() {
+            existsWrapper(uris, index+1, resultMap, done);
+        }, waitingTime);
+    });
+}
+
+function existsAll ( uris, callback ) {
+    return existsWrapper(uris, 0, {}, callback);
+}
+
 module.exports = {
-    check: exists
+    check: exists,
+    checkAll: existsAll
 };

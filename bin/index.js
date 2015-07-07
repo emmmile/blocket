@@ -23,7 +23,7 @@ var db = require('./db');
 
 module.exports = {
     index: function ( ) {
-        //blocket.scrape();
+        blocket.scrape();
 
         db.clean();
     }
