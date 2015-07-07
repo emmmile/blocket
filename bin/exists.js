@@ -56,7 +56,7 @@ function exists ( uri ) {
         pool: myPool,
     }, function(error, response, body) {
         if (error) {
-            winston.log("info", error);
+            //winston.log("info", error);
             exists(uri);
             return;
         }
