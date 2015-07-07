@@ -113,10 +113,10 @@ module.exports = {
                 uris.push(results[i].uri);
             }
 
-            winston.log("info", "checking " + results.length + " uris");
+            winston.log("info", "checking " + uris.length + " uris");
             exists.checkAll(uris, function(resultsMap){
                 for ( var i in resultsMap ) {
-                    if ( !resultsMap[i] ) {
+                    if ( resultsMap[i] == false ) {
                         module.exports.deleteAdByUri(i);
                     }
                 }

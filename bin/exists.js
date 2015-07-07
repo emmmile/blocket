@@ -34,8 +34,9 @@ function exists ( uri, callback ) {
             return;
         }
 
-        winston.log('info', {status: body.indexOf("Hittade inte annonsen&hellip;") == -1, uri: uri});
-        callback(uri, true);
+        var isPage = body.indexOf("Hittade inte annonsen&hellip;") == -1;
+        winston.log('info', {status: isPage, uri: uri});
+        callback(uri, isPage);
     });
 }
 
