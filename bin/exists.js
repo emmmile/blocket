@@ -53,6 +53,7 @@ function exists ( uri ) {
     }, function(error, response, body) {
         if (error) {
             exists(uri);
+            return;
         }
 
         winston.log('info', {uri: uri, status: response.statusCode});
