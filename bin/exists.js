@@ -9,12 +9,12 @@ var request = require("request");
 var connectionPool = new http.Agent();
 connectionPool.maxSockets = 5;
 
-var waitingTime = 200; // waiting time between one connection and the other
+var waitingTime = 500; // waiting time between one connection and the other
 
 function makeOptions ( uri ) {
     return {
         uri: uri,
-        method: "HEAD",
+        method: "GET",
         timeout: 10000,
         followRedirect: true,
         maxRedirects: 10,
@@ -28,13 +28,13 @@ function exists ( uri, callback ) {
             if ( error.code != 'ENOTFOUND' )
                 exists(uri, callback);
             else {
-                winston.log('info', {status: "NOT FOUND", uri: uri});
+                winston.log('info', {status: false, uri: uri});
                 callback(uri, false);
             }
             return;
         }
 
-        winston.log('info', {status: "OK", uri: uri});
+        winston.log('info', {status: body.indexOf("Hittade inte annonsen&hellip;") == -1, uri: uri});
         callback(uri, true);
     });
 }

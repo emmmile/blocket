@@ -114,7 +114,7 @@ module.exports = {
             }
 
             winston.log("info", "checking " + results.length + " uris");
-            exists.checkAll(uris.reverse(), function(resultsMap){
+            exists.checkAll(uris, function(resultsMap){
                 for ( var i in resultsMap ) {
                     if ( !resultsMap[i] ) {
                         module.exports.deleteAdByUri(i);
