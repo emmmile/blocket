@@ -56,7 +56,8 @@ function exists ( uri ) {
             return;
         }
 
-        winston.log('info', {uri: uri, status: response.statusCode});
+        if ( response.statusCode != 200 )
+            winston.log('info', {uri: uri, status: response.statusCode});
     });
 }
 
