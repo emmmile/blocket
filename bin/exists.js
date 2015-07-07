@@ -6,11 +6,7 @@ var winston = require('winston');
 //var http = require('http');
 var request = require("request");
 
-var maximumAttempts = 5;
-
-
-function exists ( uri, attempt ) {
-    attempt = typeof attempt !== 'undefined' ? attempt : 0;
+function exists ( uri ) {
     //
     //var groups = /https?:\/\/([^\/]+)(\/.*)/i.exec(uri);
     //var left = groups[1];
@@ -56,11 +52,7 @@ function exists ( uri, attempt ) {
       maxRedirects: 10
     }, function(error, response, body) {
         if (error) {
-            if (attempt < maximumAttempts)
-                exists(uri, ++attempt);
-            else
-                winston.log('info', "uri probably does not exists: ", uri);
-            return;
+            exists(uri);
         }
 
         winston.log('info', {uri: uri, status: response.statusCode});
