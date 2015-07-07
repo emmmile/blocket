@@ -3,10 +3,6 @@
  */
 
 
-var blocket = require('./blocket');
-var db = require('./db');
-
-
 //var tunnelbana = require('./tunnelbana');
 //function dumpStation ( station ) {
 //    console.log(JSON.stringify(station));
@@ -22,8 +18,11 @@ var db = require('./db');
 
 module.exports = {
     index: function ( ) {
-        db.clean();
-
+        var blocket = require('./blocket');
         blocket.scrape();
+    },
+    clean: function ( ) {
+        var db = require('./db');
+        db.clean();
     }
 };

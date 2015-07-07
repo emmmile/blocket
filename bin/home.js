@@ -21,6 +21,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var index = require('./index');
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -29,9 +30,11 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+new CronJob('0 30 * * * *', function() {
+  index.index();
+}, null, true, 'Europe/Rome');
 new CronJob('0 0 */2 * * *', function() {
-    var index = require('./index');
-    index.index();
+  index.clean();
 }, null, true, 'Europe/Rome');
 
 
