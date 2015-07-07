@@ -26,6 +26,3 @@ module.exports = {
         db.clean();
     }
 };
-
-
-module.exports.clean();
