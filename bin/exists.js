@@ -3,8 +3,11 @@
  */
 
 var winston = require('winston');
-//var http = require('http');
+var http = require('http');
 var request = require("request");
+
+var myPool = new http.Agent();
+myPool.maxSockets = 5;
 
 function exists ( uri ) {
     //
@@ -49,14 +52,16 @@ function exists ( uri ) {
       method: "HEAD",
       timeout: 1000,
       followRedirect: true,
-      maxRedirects: 10
+      maxRedirects: 10,
+        pool: myPool,
     }, function(error, response, body) {
         if (error) {
+            winston.log("info", error);
             exists(uri);
             return;
         }
 
-        if ( response.statusCode != 200 )
+        //if ( response.statusCode != 200 )
             winston.log('info', {uri: uri, status: response.statusCode});
     });
 }
