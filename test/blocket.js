@@ -2,7 +2,6 @@
  * Created by edt on 7/8/15.
  */
 
-
 var should  = require('should');
 var blocket = require('../bin/blocket');
 var sinon   = require('sinon');

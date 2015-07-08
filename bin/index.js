@@ -27,6 +27,3 @@ module.exports = {
         db.clean();
     }
 };
-
-
-module.exports.index();
