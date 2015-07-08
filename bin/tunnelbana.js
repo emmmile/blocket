@@ -98,5 +98,6 @@ module.exports = {
     downloadStations: downloadStations,
     downloadStation: downloadStation,
     parseLines: parseLines,
-    parseCoordinates: parseCoordinates
+    parseCoordinates: parseCoordinates,
+    mediaWikiClient: client
 };

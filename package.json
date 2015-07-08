@@ -29,6 +29,7 @@
     "x-ray": "~2.0.2"
   },
   "devDependencies": {
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
   }
 }

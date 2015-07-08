@@ -4,8 +4,10 @@
 
 'use strict';
 
-var should = require('should');
+var should     = require('should');
 var tunnelbana = require('../bin/tunnelbana');
+var sinon      = require('sinon');
+var fs         = require('fs');
 
 
 // npm install mocha --save-dev
@@ -62,12 +64,19 @@ describe('wikimedia lines parsing', function () {
 
 describe('wikipedia station download', function () {
     var sampleName = "Östermalmstorg metro station";
+    var content = fs.readFileSync('./test/files/exampleStation', 'utf8');
+
+    before(function(done){
+        var stub = sinon.stub(tunnelbana.mediaWikiClient, 'getArticle');
+        stub.withArgs(sampleName).yields(null, content);
+        done();
+    });
 
     it('should extract fields correctly', function(){
         (function(){
             tunnelbana.downloadStation(sampleName,function(station) {
-                station.should.have.property('latitude', 59.37527778);
-                station.should.have.property('longitude', 17.96916667);
+                station.should.have.property('latitude', 59.33472222);
+                station.should.have.property('longitude', 18.07388889);
                 station.should.have.property('lines', ["T13", "T14"]);
                 station.should.have.property('name', "Östermalmstorg metro station");
             });

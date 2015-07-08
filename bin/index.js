@@ -17,6 +17,7 @@
 
 
 module.exports = {
+
     index: function ( ) {
         var blocket = require('./blocket');
         blocket.scrape();
@@ -26,3 +27,6 @@ module.exports = {
         db.clean();
     }
 };
+
+
+module.exports.index();

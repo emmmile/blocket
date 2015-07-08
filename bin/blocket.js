@@ -18,7 +18,7 @@ function cleanAd ( ad ) {
             delete ad[i];
         } else {
             ad[i] = ent.decode(ad[i]);
-            ad[i] = ad[i].replace(/[\t\n]/g, "").trim();
+            ad[i] = ad[i].replace(/[\t\n]/g, " ").trim();
         }
     }
 
@@ -36,7 +36,7 @@ function cleanAd ( ad ) {
 
     ad.time = new Date(ad.time).getTime();
 
-    winston.log("info", "scraped and cleaned new ad", ad.uri);
+    winston.log("debug", "scraped and cleaned new ad", ad.uri);
     return ad;
 }
 
@@ -132,5 +132,6 @@ module.exports = {
                 winston.log("info", "there are " + inserted + " ads that have to be scraped");
             });
         });
-    }
+    },
+    cleanAd: cleanAd
 };
