@@ -20,6 +20,7 @@ module.exports = {
         var db = require('./db');
         db.allAdsWithCoordinates(function(err, ads){
             db.allStations(function(err, stations){
+                var toBeInserted = [];
 
                 for ( i in ads ) {
                     for ( j in stations ) {
@@ -29,12 +30,22 @@ module.exports = {
                         var station = {latitude: ads[i].latitude, longitude: ads[i].longitude};
                         var d = module.exports.distance(ad, station);
                         if ( d < 2 ) {
-                            db.createDistance(ads[i], stations[j], {
-                                straight: d,
+                            toBeInserted.push({
+                                from: ads[i], 
+                                distance: {straight: d}, 
+                                to: stations[j]
                             });
                         }
                     }
                 }
+
+                async.eachSeries(toBeInserted, db.insertDistance, function(err){
+                    if (err) {
+                        throw err;
+                    }
+
+                    // finished
+                })
             });
         });
     }

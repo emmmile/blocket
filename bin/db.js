@@ -59,11 +59,13 @@ module.exports = {
             }
         });
     },
-    createDistance: function (ad, node, distance) {
-        db.relate(ad, 'Distance', node, distance, function(err, rel) {
+    insertDistance: function (edge, callback) {
+        db.relate(edge.from, 'Distance', edge.to, edge.distance, function(err, rel) {
             if ( err ) {
                 winston.log("error", "error creating relationship", err);
             }
+
+            callback();
         });
     },
     allAds: function ( callback ) {
