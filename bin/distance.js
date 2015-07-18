@@ -3,6 +3,7 @@
  */
 
 var winston = require('winston');
+var async   = require('async');
 
 module.exports = {
     toRadians: function(angle) {
