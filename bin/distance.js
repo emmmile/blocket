@@ -28,8 +28,11 @@ module.exports = {
                         var ad = {latitude: stations[j].latitude, longitude: stations[j].longitude};
                         var station = {latitude: ads[i].latitude, longitude: ads[i].longitude};
                         var d = module.exports.distance(ad, station);
-                        if ( d < 2)
-                        console.log("" + d + " " + stations[j].name + " and " + i);
+                        if ( d < 2 ) {
+                            db.createDistance(ads[i], stations[j], {
+                                straight: d,
+                            });
+                        }
                     }
                 }
             });
