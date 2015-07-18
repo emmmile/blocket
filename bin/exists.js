@@ -27,11 +27,17 @@ module.exports = {
             if (error) {
                 if (error.code != 'ENOTFOUND') {
                     // try again
-                    winston.log('info', "trying again", error);
+                    // winston.log('info', "trying again", error);
                     module.exports.exists(uri, callback);
                     return;
                 } else {
                     // url does no exist
+                    if (uri == null) {
+                        winston.error("WTF, uri is null???");
+                        callback(null, false);
+                        return;
+                    }
+
                     callback(null, false);
                     return;
                 }
@@ -42,6 +48,7 @@ module.exports = {
                 winston.log('info', {status: doExists, uri: uri});
 
                 callback(null, doExists);
+                if ()
             }, module.exports.waitingTime);
         });
     },
@@ -62,6 +69,6 @@ module.exports = {
         });
     },
     client: request,
-    waitingTime: 59,
+    waitingTime: 50,
     pattern: 'Hittade inte annonsen&hellip;'
 };
