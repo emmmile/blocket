@@ -78,9 +78,7 @@ module.exports = {
         });
     },
     allAdsWithCoordinates: function ( callback ) {
-        var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n.id AS id, n.latitude AS latitude, " +
-            "n.longitude AS longitude, n.uri AS uri, n.title AS title, n.image AS image, " +
-            "n.price AS price;";
+        var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n";
 
         db.query(cypher, function(err, results) {
             for ( var i in results ) {
