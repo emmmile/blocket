@@ -22,7 +22,6 @@
     "html-entities": "^1.1.2",
     "morgan": "~1.5.3",
     "nodemw": "0.6.1",
-    "noodlejs": "*",
     "request": "^2.58.0",
     "seraph": "0.13.1",
     "serve-favicon": "~2.2.1",
