@@ -24,7 +24,7 @@ function makeOptions ( uri ) {
 module.exports = {
     exists: function (uri, callback) {
         // url does no exist!!!
-        if (uri == null) {
+        if (uri === null || uri === undefined) {
             winston.error("WTF uri is null: check insertion in DB");
             callback(null, false);
             return;
