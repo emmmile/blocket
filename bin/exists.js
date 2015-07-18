@@ -23,6 +23,13 @@ function makeOptions ( uri ) {
 
 module.exports = {
     exists: function (uri, callback) {
+        // url does no exist!!!
+        if (uri == null) {
+            winston.error("WTF uri is null: check insertion in DB");
+            callback(null, false);
+            return;
+        }
+
         module.exports.client(makeOptions(uri), function (error, response, body) {
             if (error) {
                 if (error.code != 'ENOTFOUND') {
@@ -31,13 +38,6 @@ module.exports = {
                     module.exports.exists(uri, callback);
                     return;
                 } else {
-                    // url does no exist
-                    if (uri == null) {
-                        winston.error("WTF, uri is null???");
-                        callback(null, false);
-                        return;
-                    }
-
                     callback(null, false);
                     return;
                 }
