@@ -8,13 +8,13 @@ var request = require("request");
 var async = require("async");
 
 var connectionPool = new http.Agent();
-connectionPool.maxSockets = 5;
+connectionPool.maxSockets = 2;
 
 function makeOptions ( uri ) {
     return {
         uri: uri,
         method: "GET",
-        timeout: 10000,
+        timeout: 5000,
         followRedirect: true,
         maxRedirects: 10,
         pool: connectionPool
@@ -62,6 +62,6 @@ module.exports = {
         });
     },
     client: request,
-    waitingTime: 200,
+    waitingTime: 59,
     pattern: 'Hittade inte annonsen&hellip;'
 };

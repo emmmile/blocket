@@ -146,5 +146,5 @@ module.exports = {
         })
     },
     scraper: x,
-    pages: 5
+    pages: 40
 };

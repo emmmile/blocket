@@ -31,11 +31,11 @@ server.on('error', onError);
 server.on('listening', onListening);
 new CronJob('0 30 * * * *', function() {
   var blocket = require('./blocket');
-  blocket.scrape();
+  blocket.scrape(function(err,res){});
 }, null, true, 'Europe/Rome');
 new CronJob('0 0 */4 * * *', function() {
   var db = require('./db');
-  db.clean();
+  db.clean(function(err, res){});
 }, null, true, 'Europe/Rome');
 
 
