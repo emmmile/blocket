@@ -79,6 +79,7 @@ module.exports = {
             }]
         )(function(err, results) {
             if (err) {
+                winston.error(err);
                 throw err;
             }
 
@@ -96,6 +97,7 @@ module.exports = {
         winston.log("info", "downloading " + pages.length + " index pages");
         async.mapSeries(pages, module.exports.scrapeIndexPage, function(err, results){
             if (err) {
+                winston.error(err);
                 throw err;
             }
 
@@ -112,6 +114,7 @@ module.exports = {
     scrapeDetails: function(ads, callback) {
         async.eachSeries(ads, module.exports.scrapePageDetails, function(err){
             if (err) {
+                winston.error(err);
                 throw err;
             }
 
@@ -122,6 +125,7 @@ module.exports = {
     scrape: function(callback) {
         module.exports.scrapeIndex(function (err, ads) {
             if (err) {
+                winston.error(err);
                 throw err;
             }
 
@@ -146,5 +150,5 @@ module.exports = {
         })
     },
     scraper: x,
-    pages: 40
+    pages: 10
 };
