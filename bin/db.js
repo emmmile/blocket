@@ -79,7 +79,7 @@ module.exports = {
         });
     },
     allAdsWithCoordinates: function ( callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) AND s.name = 'Hötorget metro station' RETURN n";
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE r.straight < 1 AND has(n.latitude) AND s.name = 'Hötorget metro station' RETURN n";
 
         db.query(cypher, function(err, results) {
             for ( var i in results ) {
