@@ -16,14 +16,15 @@
 //});
 
 
-module.exports = {
+var blocket = require('./blocket');
+var db = require('./db');
+var async = require('async');
+var winston = require('winston');
 
-    index: function ( ) {
-        var blocket = require('./blocket');
-        blocket.scrape();
-    },
-    clean: function ( ) {
-        var db = require('./db');
-        db.clean();
-    }
-};
+async.series([
+    function(callback){ db.clean(callback); },
+    function(callback){ blocket.scrape(callback); }
+], function(err, results){
+    winston.log("info", "finished.");
+});
+

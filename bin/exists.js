@@ -5,11 +5,10 @@
 var winston = require('winston');
 var http = require('http');
 var request = require("request");
+var async = require("async");
 
 var connectionPool = new http.Agent();
 connectionPool.maxSockets = 5;
-
-var waitingTime = 500; // waiting time between one connection and the other
 
 function makeOptions ( uri ) {
     return {
@@ -22,43 +21,47 @@ function makeOptions ( uri ) {
     };
 }
 
-function exists ( uri, callback ) {
-    request(makeOptions(uri), function(error, response, body) {
-        if (error) {
-            if ( error.code != 'ENOTFOUND' )
-                exists(uri, callback);
-            else {
-                winston.log('info', {status: false, uri: uri});
-                callback(uri, false);
-            }
-            return;
-        }
-
-        var isPage = body.indexOf("Hittade inte annonsen&hellip;") == -1;
-        winston.log('info', {status: isPage, uri: uri});
-        callback(uri, isPage);
-    });
-}
-
-function existsWrapper ( uris, index, resultMap, done ) {
-    if ( index >= uris.length ) {
-        done(resultMap);
-        return;
-    }
-
-    exists(uris[index], function(uri, outcome){
-        resultMap[uri] = outcome;
-        setTimeout(function() {
-            existsWrapper(uris, index+1, resultMap, done);
-        }, waitingTime);
-    });
-}
-
-function existsAll ( uris, callback ) {
-    return existsWrapper(uris, 0, {}, callback);
-}
-
 module.exports = {
-    check: exists,
-    checkAll: existsAll
+    exists: function (uri, callback) {
+        module.exports.client(makeOptions(uri), function (error, response, body) {
+            if (error) {
+                if (error.code != 'ENOTFOUND') {
+                    // try again
+                    winston.log('info', "trying again", error);
+                    module.exports.exists(uri, callback);
+                    return;
+                } else {
+                    // url does no exist
+                    callback(null, false);
+                    return;
+                }
+            }
+
+            setTimeout(function () {
+                var doExists = body.indexOf(module.exports.pattern) == -1;
+                winston.log('info', {status: doExists, uri: uri});
+
+                callback(null, doExists);
+            }, module.exports.waitingTime);
+        });
+    },
+    existsAll: function (uris, callback) {
+        async.mapSeries(uris, module.exports.exists, function(err, results) {
+            if (err) {
+                throw err;
+            }
+
+            urisToDelete = [];
+            for ( var i = 0; i < results.length; ++i ) {
+                if ( results[i] == false ) {
+                    urisToDelete.push(uris[i]);
+                }
+            }
+
+            callback(null, urisToDelete);
+        });
+    },
+    client: request,
+    waitingTime: 50,
+    pattern: 'Hittade inte annonsen&hellip;'
 };

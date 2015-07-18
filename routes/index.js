@@ -41,6 +41,7 @@ router.get('/blocket/statistics/', function(req, res, next) {
     db.allAds(function(err, results){
         var withAddress = 0;
         var withCoordinates = 0;
+        var withPrice = 0;
         var stats = {};
 
         for ( var i in results ) {
@@ -51,11 +52,16 @@ router.get('/blocket/statistics/', function(req, res, next) {
             if ( 'latitude' in results[i] ) {
                 withCoordinates++;
             }
+
+            if ( 'price' in results[i] ) {
+                withPrice++;
+            }
         }
 
         stats.total = results.length;
         stats.withAddress = withAddress;
         stats.withCoordinates = withCoordinates;
+        stats.withPrice = withPrice;
 
         res.json(stats);
     });

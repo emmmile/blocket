@@ -5,6 +5,7 @@
 var winston = require('winston');
 var config = require('../config');
 var exists = require('./exists');
+var async = require('async');
 
 db = require("seraph")({
     server: config.db.host + ":" + config.db.port,
@@ -52,18 +53,19 @@ module.exports = {
         });
     },
     insertAd: function( ad ) {
-        db.constraints.uniqueness.createIfNone('Ad', 'uri', function(err, constraint) {
-            if (err) {
-                throw err;
-            }
-        });
-
         db.save(ad, 'Ad', function(err, node) {
-            if ( err ) throw err;
+            if ( err ) {
+                winston.log("error", "error inserting ad in DB", err);
+            }
         });
     },
     allAds: function ( callback ) {
         db.nodesWithLabel('Ad', function(err, results){
+            if (err) {
+                throw err;
+            }
+
+            winston.info("dowloaded " + results.length + " ads from DB");
             callback(err,results);
         });
     },
@@ -75,6 +77,7 @@ module.exports = {
         db.query(cypher, function(err, results) {
             for ( var i in results ) {
                 for ( var j in results[i] ) {
+                    if ( !('price' in results[i]) )
                     if ( results[i][j] == null ) {
                         delete results[i][j];
                     }
@@ -84,13 +87,13 @@ module.exports = {
             callback(err,results);
         });
     },
-    deleteAdByUri: function (uri) {
+    deleteAdByUri: function (uri, callback) {
         winston.log("info", "deleting uri ", uri );
 
         db.find({uri: uri}, false, 'Ad', function (err, objs) {
             if (err) {
                 winston.log('error', "unable to find node with uri ", uri);
-                return;
+                throw err;
             }
 
             if (objs.length != 1) {
@@ -102,24 +105,39 @@ module.exports = {
                 if (err) {
                     winston.log('error', "unable to delete node with uri ", uri);
                 }
+
+                callback(null);
             })
         });
     },
+    deleteAdsByUri: function (uris, callback) {
+        winston.log("info", "deleting " + uris.length + " uris");
+
+        async.eachSeries(uris, module.exports.deleteAdByUri,
+        function(err){
+            if (err) {
+                throw err;
+            }
+
+            callback(null, uris);
+        });
+
+    },
     // not sure this is the rigth place for this procedure
-    clean: function ( ) {
+    clean: function ( callback ) {
         db.nodesWithLabel('Ad', function(err, results) {
+            if (err) {
+                throw err;
+            }
+
             var uris = [];
             for ( var i in results ) {
                 uris.push(results[i].uri);
             }
 
-            winston.log("info", "checking " + uris.length + " uris");
-            exists.checkAll(uris, function(resultsMap){
-                for ( var i in resultsMap ) {
-                    if ( resultsMap[i] == false ) {
-                        module.exports.deleteAdByUri(i);
-                    }
-                }
+            winston.info("checking " + uris.length + " uris");
+            exists.existsAll(uris, function(err,urisToDelete){
+                module.exports.deleteAdsByUri(urisToDelete, callback);
             });
         });
     }

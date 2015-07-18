@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/home.js",
-    "index": "node ./bin/index.js",
-    "blocket": "node ./bin/blocket.js",
-    "test": "node node_modules/mocha/bin/mocha test"
+    "test": "node node_modules/mocha/bin/mocha test",
+    "updatedb": "node ./bin/updatedb.js",
+    "distance": "node ./bin/distance.js",
+    "blocket": "node ./bin/blocket.js"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
