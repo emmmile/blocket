@@ -62,6 +62,6 @@ module.exports = {
         });
     },
     client: request,
-    waitingTime: 50,
+    waitingTime: 200,
     pattern: 'Hittade inte annonsen&hellip;'
 };
