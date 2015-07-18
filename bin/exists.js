@@ -48,7 +48,6 @@ module.exports = {
                 winston.log('info', {status: doExists, uri: uri});
 
                 callback(null, doExists);
-                if ()
             }, module.exports.waitingTime);
         });
     },
