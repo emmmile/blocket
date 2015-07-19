@@ -79,8 +79,8 @@ module.exports = {
         });
     },
     allAdsWithCoordinates: function ( callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) "
-                     "WHERE r.straight < 1 AND "
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) " +
+                     "WHERE r.straight < 1 AND " +
                      "('T13' IN s.lines OR 'T14' IN s.lines) RETURN n";
 
         db.query(cypher, function(err, results) {
