@@ -45,14 +45,14 @@ module.exports = {
     scrapePageDetails: function (ad, callback) {
         module.exports.scraper(ad.uri, '#blocket_content',[{
             address: 'ul.body-links h3.h5',
-            description: 'p.object-text',
+            // description: 'p.object-text',
             coordinates: 'a.map-wrapper img@src'
         }])(function(err, results){
             if (err) {
                 throw err;
             }
 
-            ad.description = results[0].description;
+            //ad.description = results[0].description;
             ad.address = results[0].address;
             ad.coordinates = results[0].coordinates;
             ad = module.exports.cleanAd(ad);

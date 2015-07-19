@@ -39,8 +39,8 @@ module.exports = {
                             var d = module.exports.distance(ad, station);
                             if ( d < 3 ) {
                                 toBeInserted.push({
-                                    from: ads[i], 
-                                    distance: {straight: d}, 
+                                    from: ads[i],
+                                    distance: {straight: d},
                                     to: stations[j]
                                 });
                             }
