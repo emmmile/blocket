@@ -117,6 +117,13 @@ module.exports = {
             callback(err,results);
         });
     },
+    deleteDistances: function (callback) {
+        var cypher = "MATCH ()-[r:Distance]-() DELETE r";
+
+        db.query(cypher, function(err, results) {
+            callback(err, results);
+        });
+    },
     deleteAdByUri: function (uri, callback) {
         winston.log("info", "deleting uri ", uri );
 

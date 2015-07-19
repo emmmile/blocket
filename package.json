@@ -5,9 +5,7 @@
   "scripts": {
     "start": "node ./bin/home.js",
     "test": "node node_modules/mocha/bin/mocha test",
-    "updatedb": "node ./bin/updatedb.js",
-    "distance": "node ./bin/distance.js",
-    "blocket": "node ./bin/blocket.js"
+    "updatedb": "node ./bin/updatedb.js"
   },
   "dependencies": {
     "async": "^1.3.0",

@@ -16,14 +16,16 @@
 //});
 
 
-var blocket = require('./blocket');
-var db = require('./db');
-var async = require('async');
-var winston = require('winston');
+var blocket  = require('./blocket');
+var db       = require('./db');
+var distance = require('./distance');
+var async    = require('async');
+var winston  = require('winston');
 
 async.series([
-    function(callback){ db.clean(callback); },
-    function(callback){ blocket.scrape(callback); }
+    // function(callback){ db.clean(callback); },
+    function(callback){ blocket.scrape(callback); },
+    function(callback){ distance.allDistances(callback); },
 ], function(err, results){
     winston.log("info", "finished.");
 });

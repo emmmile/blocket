@@ -9,14 +9,10 @@ var db = require('../bin/db');
 //});
 
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Blocket Stockholm' });
-});
-
-router.get('/:line/:distance', function(req, res, next) {
     res.render('index', { 
         title: 'Blocket Stockholm',
-        lineOrColor: req.params.line,
-        distance: req.params.distance
+        lineOrColor: req.query.line,
+        distance: req.query.distance
     });
 });
 
