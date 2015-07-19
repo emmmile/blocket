@@ -53,6 +53,7 @@ module.exports = {
                         }
 
                         // finished
+                        winston.info("inserted " + toBeInserted.length + " distances in DB");
                         callback(null,{});
                     })
                 });
