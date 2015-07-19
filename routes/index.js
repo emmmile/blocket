@@ -12,6 +12,14 @@ router.get('/', function(req, res, next) {
     res.render('index', { title: 'Blocket Stockholm' });
 });
 
+router.get('/:line/:distance', function(req, res, next) {
+    res.render('index', { 
+        title: 'Blocket Stockholm',
+        lineOrColor: req.params.line,
+        distance: req.params.distance
+    });
+});
+
 router.get('/tunnelbana/', function(req, res, next) {
     db.allStations(function(err, results){
         res.json(results);
@@ -24,8 +32,8 @@ router.get('/tunnelbana/:line', function(req, res, next) {
     });
 });
 
-router.get('/blocket/', function(req, res, next) {
-    db.allAdsWithCoordinates(function(err, results){
+router.get('/blocket/:line/:distance', function(req, res, next) {
+    db.allAdsToDisplay(req.params.line, req.params.distance, function(err, results){
         res.json(results);
     });
 });

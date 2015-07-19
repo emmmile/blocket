@@ -79,20 +79,41 @@ module.exports = {
         });
     },
     allAdsWithCoordinates: function ( callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) " +
-                     "WHERE r.straight < 1 AND " +
-                     "('T13' IN s.lines OR 'T14' IN s.lines) RETURN n";
+        var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n";
 
         db.query(cypher, function(err, results) {
-            for ( var i in results ) {
-                for ( var j in results[i] ) {
-                    if ( !('price' in results[i]) )
-                    if ( results[i][j] == null ) {
-                        delete results[i][j];
-                    }
+            // for ( var i in results ) {
+            //     for ( var j in results[i] ) {
+            //         if ( results[i][j] == null ) {
+            //             delete results[i][j];
+            //         }
+            //     }
+            // }
+
+            callback(err,results);
+        });
+    },
+    allAdsToDisplay: function ( lineOrColor, distance, callback ) {
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) " +
+                     "WHERE r.straight < " + distance + " AND ";
+        if ( lineOrColor in lines ) {
+            cypher += "(";
+            for ( i in lines[lineOrColor] ) {
+                cypher += "'" + lines[lineOrColor][i] + "' IN s.lines";
+                if ( i != lines[lineOrColor].length - 1 ) {
+                    cypher += " OR ";
                 }
             }
+            cypher += ") ";
+        } else {
+            // TODO should check that the line exists...
+            cypher += "'" + lineOrColor + "' IN s.lines ";
+        }
 
+        cypher += "RETURN n";
+        winston.info(cypher);
+
+        db.query(cypher, function(err, results) {
             callback(err,results);
         });
     },
