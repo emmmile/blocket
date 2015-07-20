@@ -11,6 +11,8 @@ npm start
 
 In this way the application is listening on [http://127.0.0.1:3000](http://127.0.0.1:3000) and views something like this:
 
+![](https://raw.githubusercontent.com/emmmile/blocket/master/screenshot.png)
+
 It expects two parameters:
 
 - `line` that can be one in `red`, `green`, `blue`, or the name of a line like `T10`, `T11`,  `T13`, `T14`,  `T17`, `T18`,  `T19`.
