@@ -10,6 +10,7 @@ var Xray = require('x-ray');
 var async = require('async');
 var x = Xray();
 x.concurrency(1);
+x.timeout(10000);
 
 
 module.exports = {
@@ -80,7 +81,9 @@ module.exports = {
         )(function(err, results) {
             if (err) {
                 winston.error(err);
-                throw err;
+
+                module.exports.scrapeIndexPage(page, callback);
+                return;
             }
 
             callback(null, results);
@@ -150,5 +153,5 @@ module.exports = {
         })
     },
     scraper: x,
-    pages: 5
+    pages: 40
 };
