@@ -45,7 +45,7 @@ function setMarkers(map, locations, key, markerIcon) {
                     content += '<img src="'+ locations[i].image +'">';
 
                 if ( 'price' in locations[i] )
-                    content += '<p>'+ locations[i].price +'</p>';
+                    content += '<p>'+ locations[i].price +' SEK/month</p>';
             }
 
             makeInfoWindowEvent(map, infowindow, content, marker);

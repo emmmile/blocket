@@ -82,14 +82,6 @@ module.exports = {
         var cypher = "MATCH (n:Ad) WHERE has(n.latitude) RETURN n";
 
         db.query(cypher, function(err, results) {
-            // for ( var i in results ) {
-            //     for ( var j in results[i] ) {
-            //         if ( results[i][j] == null ) {
-            //             delete results[i][j];
-            //         }
-            //     }
-            // }
-
             callback(err,results);
         });
     },
