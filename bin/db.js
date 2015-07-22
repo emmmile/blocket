@@ -124,39 +124,27 @@ module.exports = {
             callback(err, results);
         });
     },
-    deleteAdByUri: function (uri, callback) {
-        winston.log("info", "deleting uri ", uri );
+    deleteAd: function (id, callback) {
+        winston.log("info", "deleting ad ", id );
 
-        db.find({uri: uri}, false, 'Ad', function (err, objs) {
+        db.delete(id, function(err) {
             if (err) {
-                winston.log('error', "unable to find node with uri ", uri);
-                throw err;
+                winston.log('error', "unable to delete node with id ", id);
             }
 
-            if (objs.length != 1) {
-                winston.log('error', "more than one node with uri ", uri);
-                throw { reason: "wtf" };
-            }
-
-            db.delete(objs[0].id, function(err) {
-                if (err) {
-                    winston.log('error', "unable to delete node with uri ", uri);
-                }
-
-                callback(null);
-            })
+            callback(null);
         });
     },
-    deleteAdsByUri: function (uris, callback) {
-        winston.log("info", "deleting " + uris.length + " uris");
+    deleteAdsById: function (adsToDelete, callback) {
+        winston.log("info", "deleting " + adsToDelete.length + " ads");
 
-        async.eachSeries(uris, module.exports.deleteAdByUri,
+        async.eachSeries(adsToDelete, module.exports.deleteAd,
         function(err){
             if (err) {
                 throw err;
             }
 
-            callback(null, uris);
+            callback(null, adsToDelete);
         });
 
     },
@@ -167,14 +155,22 @@ module.exports = {
                 throw err;
             }
 
-            var uris = [];
+            results.sort(function(a,b){ return a.time < b.time; });
+
+            var uriToIdMap = {};
             for ( var i in results ) {
-                uris.push(results[i].uri);
+                uriToIdMap[results[i].uri] = results[i].id;
             }
 
+            var uris = Object.keys(uriToIdMap);
             winston.info("checking " + uris.length + " uris");
-            exists.existsAll(uris, function(err,urisToDelete){
-                module.exports.deleteAdsByUri(urisToDelete, callback);
+            exists.existsAll(uris, function(err, urisToDelete){
+                var adsToDelete = [];
+                for ( var i in urisToDelete ) {
+                    adsToDelete.push(uriToIdMap[urisToDelete[i]]);
+                }
+
+                module.exports.deleteAdsById(adsToDelete, callback);
             });
         });
     }

@@ -23,8 +23,8 @@ var async    = require('async');
 var winston  = require('winston');
 
 async.series([
-    function(callback){ blocket.scrape(callback); },
-    function(callback){ distance.allDistances(callback); },
+    // // function(callback){ blocket.scrape(callback); },
+    // function(callback){ distance.allDistances(callback); },
     function(callback){ db.clean(callback); }
 ], function(err, results){
     winston.log("info", "finished.");
