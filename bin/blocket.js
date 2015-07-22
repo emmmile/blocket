@@ -55,11 +55,14 @@ module.exports = {
     scrapePageDetails: function (ad, callback) {
         module.exports.scraper(ad.uri, '#blocket_content',[{
             address: 'ul.body-links h3.h5',
-            // description: 'p.object-text',
+            description: 'p.object-text',
             coordinates: 'a.map-wrapper img@src'
         }])(function(err, results){
             if (err) {
-                throw err;
+                winston.error(ad, err);
+
+                module.exports.scrapePageDetails(ad, callback);
+                return;
             }
 
             //ad.description = results[0].description;
@@ -69,7 +72,19 @@ module.exports = {
 
             winston.log("info", "inserted ad in DB", ad.uri);
             db.insertAd(ad);
-            callback();
+            callback(null);
+        });
+    },
+    // scrape all the information available for the selected ads
+    scrapeDetails: function(ads, callback) {
+        async.eachSeries(ads, module.exports.scrapePageDetails, function(err){
+            if (err) {
+                winston.error(err);
+                throw err;
+            }
+
+            winston.log("info", ads.length + " ads have been scraped");
+            callback(null, ads);
         });
     },
     scrapeIndexPage: function(page, callback) {
@@ -119,18 +134,6 @@ module.exports = {
             }
 
             winston.log("info", "downloaded " + ads.length + " ads");
-            callback(null, ads);
-        });
-    },
-    // scrape all the information available for the selected ads
-    scrapeDetails: function(ads, callback) {
-        async.eachSeries(ads, module.exports.scrapePageDetails, function(err){
-            if (err) {
-                winston.error(err);
-                throw err;
-            }
-
-            winston.log("info", ads.length + " ads have been scraped");
             callback(null, ads);
         });
     },
