@@ -12,7 +12,8 @@ router.get('/', function(req, res, next) {
     res.render('index', { 
         title: 'Blocket Stockholm',
         lineOrColor: req.query.line,
-        distance: req.query.distance
+        distance: req.query.distance,
+        price: req.query.price
     });
 });
 
@@ -28,8 +29,8 @@ router.get('/tunnelbana/:line', function(req, res, next) {
     });
 });
 
-router.get('/blocket/:line/:distance', function(req, res, next) {
-    db.allAdsToDisplay(req.params.line, req.params.distance, function(err, results){
+router.get('/blocket/:line/:distance/:price', function(req, res, next) {
+    db.allAdsToDisplay(req.params.line, req.params.distance, req.params.price, function(err, results){
         res.json(results);
     });
 });

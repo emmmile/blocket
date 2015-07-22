@@ -62,7 +62,7 @@ function initialize() {
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 
-    $.getJSON('/blocket/'+ lineOrColor +"/"+ distance, function(ads) {
+    $.getJSON('/blocket/'+ lineOrColor +"/"+ distance + "/" + price, function(ads) {
         setMarkers(map, ads, 'title', yellowMarker);
 
 

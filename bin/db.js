@@ -93,9 +93,9 @@ module.exports = {
             callback(err,results);
         });
     },
-    allAdsToDisplay: function ( lineOrColor, distance, callback ) {
+    allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
         var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) " +
-                     "WHERE r.straight < " + distance + " AND ";
+                     "WHERE n.price <= " + price + " AND r.straight < " + distance + " AND ";
         if ( lineOrColor in lines ) {
             cypher += "(";
             for ( i in lines[lineOrColor] ) {

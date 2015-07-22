@@ -23,7 +23,8 @@ function getSampleAd() {
         "se%2Fimg%2Fbostad%2Fmap_pin.png%22%2C%22mox%22%3A6%2C%22moy%22%3A-21%7D&logo={}",
         time: "2015-07-08 09:52:43",
         description: "\n\ta very\nlong one\n\t",
-        another: "this field will remain the same"
+        another: "this field will remain the same",
+        price: "12 500 kr /mån"
     }
 }
 
@@ -78,12 +79,14 @@ describe('ad cleaning', function () {
             var sample = getSampleAd();
             blocket.cleanAd(sample);
             sample.should.have.property('description',"a very long one");
+            sample.should.have.property('price',12500);
         }).should.not.throw();
     });
 
     it('should work with missing fields', function(){
         (function(){
             var sample = getSampleAd();
+            delete sample.price;
             sample.coordinates = undefined;
             blocket.cleanAd(sample);
             sample.should.not.have.property('longitude');

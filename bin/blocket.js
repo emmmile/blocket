@@ -38,6 +38,15 @@ module.exports = {
             delete ad.coordinates;
         }
 
+        if ( ad.price ) {
+            ad.price = ad.price.replace(/\s/gi, '');
+            if ( ad.price.indexOf("kr/mån") != -1 ) {
+                ad.price = ad.price.replace(/kr\/mån/i, "") - 0;
+            } else {
+                delete ad.price;
+            }
+        }
+
         ad.time = new Date(ad.time).getTime();
 
         winston.log("debug", "scraped and cleaned new ad", ad.uri);
@@ -153,5 +162,5 @@ module.exports = {
         })
     },
     scraper: x,
-    pages: 40
+    pages: 5
 };
