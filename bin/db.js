@@ -119,7 +119,7 @@ module.exports = {
     deleteAd: function (id, callback) {
         winston.log("info", "deleting ad ", id );
 
-        db.delete(id, function(err) {
+        db.delete(id, true, function(err) {
             if (err) {
                 winston.log('error', "unable to delete node with id ", id);
             }
