@@ -23,7 +23,10 @@ module.exports = {
                 ad.latitude = res[0].latitude;
                 ad.longitude = res[0].longitude;
             }
-            callback(null);
+
+            setTimeout(function(){
+                callback(null);
+            }, 250);
         });
     },
     geocode: function (ads, callback) {
