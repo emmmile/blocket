@@ -29,15 +29,14 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-new CronJob('0 0 */1 * * *', function() {
+new CronJob('0 0 */6 * * *', function() {
   var blocket = require('./blocket');
   var distance = require('./distance');
 
-  blocket.scrape(function(err,res){
-    distance.allDistances(function(err,res){});
+  blocket.scrapeAndDistance(function(err,res){
   });
 }, null, true, 'Europe/Rome');
-new CronJob('0 0 */12 * * *', function() {
+new CronJob('0 0 */20 * * *', function() {
   var db = require('./db');
   db.clean(function(err, res){});
 }, null, true, 'Europe/Rome');
