@@ -4,10 +4,13 @@
 
 
 var winston = require('winston');
-var ent = require('ent');
-var db = require('./db');
-var Xray = require('x-ray');
-var async = require('async');
+var ent      = require('ent');
+var db       = require('./db');
+var Xray     = require('x-ray');
+var async    = require('async');
+var google   = require('./google');
+var distance = require('./distance');
+
 var x = Xray();
 x.concurrency(1);
 x.timeout(10000);
@@ -70,8 +73,8 @@ module.exports = {
             ad.coordinates = results[0].coordinates;
             ad = module.exports.cleanAd(ad);
 
-            winston.log("info", "inserted ad in DB", ad.uri);
-            db.insertAd(ad);
+            winston.log("info", "scraped ad", ad.uri);
+            //db.insertAd(ad);
             callback(null);
         });
     },
@@ -121,7 +124,7 @@ module.exports = {
             pages.push(i);
         }
 
-        winston.log("info", "downloading " + pages.length + " index pages");
+        winston.log("info", "scraping " + pages.length + " index pages");
         async.mapSeries(pages, module.exports.scrapeIndexPage, function(err, results){
             if (err) {
                 winston.error(err);
@@ -133,7 +136,7 @@ module.exports = {
                 ads = ads.concat(results.shift());
             }
 
-            winston.log("info", "downloaded " + ads.length + " ads");
+            winston.log("info", "scraped " + ads.length + " ads");
             callback(null, ads);
         });
     },
@@ -159,11 +162,20 @@ module.exports = {
                     }
                 });
 
-                winston.info("downloading details for " + ads.length + " ads.");
+                winston.info("scraping details for " + ads.length + " ads.");
                 module.exports.scrapeDetails(ads, callback);
             });
         })
     },
+    scrapeAndDistance: function(callback) {
+        module.exports.scrape(function(err, ads){
+            google.geocode(ads, function(err, updatedAds){
+                db.insertAds(updatedAds, function(err, insertedAds){
+                    distance.computeDistances(updatedAds, callback);
+                });
+            });
+        });
+    },
     scraper: x,
-    pages: 5
+    pages: 1
 };

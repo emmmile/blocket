@@ -17,47 +17,43 @@ module.exports = {
         var y = (b.latitude - a.latitude);
         return Math.sqrt(x*x + y*y) * 6371.0;
     },
-    allDistances: function(callback) {
+    computeDistances: function(ads, callback) {
         var db = require('./db');
 
-        db.deleteDistances(function(err){
-            if(err) {
-                throw err;
-            }
-            winston.info("deleted all distances");
+        db.allStations(function(err, stations){
+            var toBeInserted = [];
 
-            db.allAdsWithCoordinates(function(err, ads){
-                db.allStations(function(err, stations){
-                    var toBeInserted = [];
+            for ( i in ads ) {
+                // continue only on the georeferenced ads
+                if ( !('latitude' in ads[i]) ) {
+                    continue;
+                }
 
-                    for ( i in ads ) {
-                        for ( j in stations ) {
-                            //console.log(stations[j]);
-                            //console.log(ads[i]);
-                            var ad = {latitude: stations[j].latitude, longitude: stations[j].longitude};
-                            var station = {latitude: ads[i].latitude, longitude: ads[i].longitude};
-                            var d = module.exports.distance(ad, station);
-                            if ( d < 3 ) {
-                                toBeInserted.push({
-                                    from: ads[i],
-                                    distance: {straight: d},
-                                    to: stations[j]
-                                });
-                            }
-                        }
+                for ( j in stations ) {
+                    //console.log(stations[j]);
+                    //console.log(ads[i]);
+                    var ad = {latitude: stations[j].latitude, longitude: stations[j].longitude};
+                    var station = {latitude: ads[i].latitude, longitude: ads[i].longitude};
+                    var d = module.exports.distance(ad, station);
+                    if ( d < 3 ) {
+                        toBeInserted.push({
+                            from: ads[i],
+                            distance: {straight: d},
+                            to: stations[j]
+                        });
                     }
+                }
+            }
 
-                    async.eachSeries(toBeInserted, db.insertDistance, function(err){
-                        if (err) {
-                            throw err;
-                        }
+            async.eachSeries(toBeInserted, db.insertDistance, function(err){
+                if (err) {
+                    throw err;
+                }
 
-                        // finished
-                        winston.info("inserted " + toBeInserted.length + " distances in DB");
-                        callback(null,{});
-                    })
-                });
-            });
+                // finished
+                winston.info("inserted " + toBeInserted.length + " distances in DB");
+                callback(null,{});
+            })
         });
     }
 };

@@ -52,12 +52,25 @@ module.exports = {
             callback(err, filtered);
         });
     },
-    insertAd: function( ad ) {
+    insertAd: function( ad, callback ) {
         db.save(ad, 'Ad', function(err, node) {
             if ( err ) {
                 winston.log("error", "error inserting ad in DB", err);
             }
+
+            callback(null);
         });
+    },
+    insertAds: function (ads, callback) {
+        async.eachSeries(ads, module.exports.insertAd, function(err){
+            if (err) {
+                throw err;
+            }
+
+            // finished
+            winston.info("inserted " + ads.length + " ads in the DB");
+            callback(null,ads);
+        })
     },
     insertDistance: function (edge, callback) {
         db.relate(edge.from, 'Distance', edge.to, edge.distance, function(err, rel) {
