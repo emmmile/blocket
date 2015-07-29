@@ -171,7 +171,7 @@ module.exports = {
         module.exports.scrape(function(err, ads){
             google.geocode(ads, function(err, updatedAds){
                 db.insertAds(updatedAds, function(err, insertedAds){
-                    distance.computeDistances(updatedAds, callback);
+                    distance.computeDistances(insertedAds, callback);
                 });
             });
         });

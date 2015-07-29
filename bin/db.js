@@ -3,9 +3,9 @@
  */
 
 var winston = require('winston');
-var config = require('../config');
-var exists = require('./exists');
-var async = require('async');
+var config  = require('../config');
+var exists  = require('./exists');
+var async   = require('async');
 
 db = require("seraph")({
     server: config.db.host + ":" + config.db.port,
@@ -58,18 +58,18 @@ module.exports = {
                 winston.log("error", "error inserting ad in DB", err);
             }
 
-            callback(null);
+            callback(null, node);
         });
     },
     insertAds: function (ads, callback) {
-        async.eachSeries(ads, module.exports.insertAd, function(err){
+        async.mapSeries(ads, module.exports.insertAd, function(err, inserted){
             if (err) {
                 throw err;
             }
 
             // finished
             winston.info("inserted " + ads.length + " ads in the DB");
-            callback(null,ads);
+            callback(null,inserted);
         })
     },
     insertDistance: function (edge, callback) {

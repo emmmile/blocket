@@ -19,6 +19,7 @@
     "hbs": "~2.9.0",
     "html-entities": "^1.1.2",
     "morgan": "~1.5.3",
+    "node-geocoder": "^2.22.0",
     "nodemw": "0.6.1",
     "request": "^2.58.0",
     "seraph": "0.13.1",
