@@ -19,7 +19,7 @@ module.exports = {
             }
 
             if (res.length > 0) {
-                winston.info("Geocoded '" + ad.address + "'");
+                winston.info("geocoded '" + ad.address + "'");
                 ad.latitude = res[0].latitude;
                 ad.longitude = res[0].longitude;
             }
