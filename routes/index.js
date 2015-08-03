@@ -29,7 +29,7 @@ router.get('/tunnelbana/:line', function(req, res, next) {
     });
 });
 
-router.get('/blocket/:line/:distance/:price', function(req, res, next) {
+router.get('/blocket/:line/:distance/:price?', function(req, res, next) {
     db.allAdsToDisplay(req.params.line, req.params.distance, req.params.price, function(err, results){
         res.json(results);
     });
