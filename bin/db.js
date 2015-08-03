@@ -99,7 +99,8 @@ module.exports = {
         });
     },
     allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE " +
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE ";
+        
         if (price) {
             cypher += "n.price <= " + price;
         }
