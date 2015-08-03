@@ -99,12 +99,12 @@ module.exports = {
         });
     },
     allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
-        if ( !price ) {
-            price = 10000000; // do not filter on price if missing
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE " +
+        if (price) {
+            cypher += "n.price <= " + price;
         }
 
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) " +
-                     "WHERE n.price <= " + price + " AND r.straight < " + distance + " AND ";
+        cypher += " AND r.straight < " + distance + " AND ";
         if ( lineOrColor in lines ) {
             cypher += "(";
             for ( i in lines[lineOrColor] ) {
