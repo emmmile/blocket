@@ -100,12 +100,12 @@ module.exports = {
     },
     allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
         var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE ";
-        
+
         if (price) {
-            cypher += "n.price <= " + price;
+            cypher += "n.price <= " + price + " AND ";
         }
 
-        cypher += " AND r.straight < " + distance + " AND ";
+        cypher += "r.straight < " + distance + " AND ";
         if ( lineOrColor in lines ) {
             cypher += "(";
             for ( i in lines[lineOrColor] ) {
