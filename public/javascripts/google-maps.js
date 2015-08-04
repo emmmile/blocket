@@ -67,13 +67,13 @@ function initialize() {
 
 
 
-        $.getJSON('/tunnelbana/blue/', function(tunnelbanaStations) {
+        $.getJSON('/blocket/tunnelbana/blue/', function(tunnelbanaStations) {
             setMarkers(map, tunnelbanaStations, 'name', blueMarker);
         });
-        $.getJSON('/tunnelbana/green/', function(tunnelbanaStations) {
+        $.getJSON('/blocket/tunnelbana/green/', function(tunnelbanaStations) {
             setMarkers(map, tunnelbanaStations, 'name', greenMarker);
         });
-        $.getJSON('/tunnelbana/red/', function(tunnelbanaStations) {
+        $.getJSON('/blocket/tunnelbana/red/', function(tunnelbanaStations) {
             setMarkers(map, tunnelbanaStations, 'name', redMarker);
         });
     });

@@ -58,13 +58,13 @@ router.get('/blocket/map/:line/:distance/:price', function(req, res, next) {
     });
 });
 
-router.get('/tunnelbana/', function(req, res, next) {
+router.get('/blocket/tunnelbana/', function(req, res, next) {
     db.allStations(function(err, results){
         res.json(results);
     });
 });
 
-router.get('/tunnelbana/:line', function(req, res, next) {
+router.get('/blocket/tunnelbana/:line', function(req, res, next) {
     db.allStationsOnLine(req.params.line,function(err, results){
         res.json(results);
     });
