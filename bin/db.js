@@ -101,11 +101,14 @@ module.exports = {
     allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
         var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE ";
 
-        if (price) {
+        if ( price > 0 ) {
             cypher += "n.price <= " + price + " AND ";
         }
 
-        cypher += "r.straight < " + distance + " AND ";
+        if ( distance > 0 ) {
+            cypher += "r.straight < " + distance + " AND ";
+        }
+
         if ( lineOrColor in lines ) {
             cypher += "(";
             for ( i in lines[lineOrColor] ) {
@@ -116,8 +119,11 @@ module.exports = {
             }
             cypher += ") ";
         } else {
-            // TODO should check that the line exists...
-            cypher += "'" + lineOrColor + "' IN s.lines ";
+            if ( lineOrColor != "any" ) {
+                cypher += "'" + lineOrColor + "' IN s.lines ";
+            } else {
+                cypher += "true ";
+            }
         }
 
         cypher += "RETURN n";
