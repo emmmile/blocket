@@ -49,7 +49,7 @@ router.param('price', function(req, res, next, price) {
 });
 
 
-router.get('/:line/:distance/:price', function(req, res, next) {
+router.get('/blocket/map/:line/:distance/:price', function(req, res, next) {
     res.render('index', { 
         title: 'Blocket Stockholm',
         lineOrColor: req.params.line,
