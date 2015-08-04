@@ -13,12 +13,10 @@ In this way the application is listening on [http://127.0.0.1:3000](http://127.0
 
 ![](https://raw.githubusercontent.com/emmmile/blocket/master/screenshot.png)
 
-The base route expects two parameters for filtering the results:
+The base route expects some parameters for filtering the results. 
 
-- `line` that can be one in `red`, `green`, `blue`, or the name of a line like `T10`, `T11`,  `T13`, `T14`,  `T17`, `T18`,  `T19`.
-- `distance` that is the distance in km from the closest station.
-
-Optional parameters:
-- `price` in SEK/month.
+- the metro line that can be one in `red`, `green`, `blue`, or the name of a line like `T10`, `T11`,  `T13`, `T14`,  `T17`, `T18`,  `T19`. The value `any` can be used to get any line or color.
+- the distance in km from the closest metro station. It can also be a decimal like `0.4`. If the distance is 0, no filtering is done, i.e. all ads with some coordinates are returned.
+- the price in SEK/month. If 0 is passed, no filtering is done on the price.
 
 The application also needs a Neo4j database up and running, that can be configuered through `config.js`.
