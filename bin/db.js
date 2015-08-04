@@ -99,31 +99,34 @@ module.exports = {
         });
     },
     allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE ";
-
-        if ( price > 0 ) {
-            cypher += "n.price <= " + price + " AND ";
-        }
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) ";
 
         if ( distance > 0 ) {
-            cypher += "r.straight < " + distance + " AND ";
-        }
+            cypher += "AND r.straight <= " + distance + " ";
 
-        if ( lineOrColor in lines ) {
-            cypher += "(";
-            for ( i in lines[lineOrColor] ) {
-                cypher += "'" + lines[lineOrColor][i] + "' IN s.lines";
-                if ( i != lines[lineOrColor].length - 1 ) {
-                    cypher += " OR ";
+            if ( lineOrColor in lines ) {
+                cypher += "AND (";
+                for ( i in lines[lineOrColor] ) {
+                    cypher += "'" + lines[lineOrColor][i] + "' IN s.lines";
+                    if ( i != lines[lineOrColor].length - 1 ) {
+                        cypher += " OR ";
+                    }
+                }
+                cypher += ") ";
+            } else {
+                if ( lineOrColor != "any" ) {
+                    cypher += "AND '" + lineOrColor + "' IN s.lines ";
+                } else {
+                    // any station or line is OK
                 }
             }
-            cypher += ") ";
         } else {
-            if ( lineOrColor != "any" ) {
-                cypher += "'" + lineOrColor + "' IN s.lines ";
-            } else {
-                cypher += "true ";
-            }
+            // do not use te constraint to be close to a station
+            cypher = "MATCH (n:Ad) WHERE has(n.latitude) ";
+        }
+
+        if ( price > 0 ) {
+            cypher += "AND n.price <= " + price + " ";
         }
 
         cypher += "RETURN n";
