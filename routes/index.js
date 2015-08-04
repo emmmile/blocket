@@ -13,7 +13,7 @@ var db = require('../bin/db');
 router.param('line', function(req, res, next, line) {
     winston.info('doing line validation on ' + line);
 
-    var validator = /^(any|red|green|blue|T10|T11)$/;
+    var validator = /^(any|red|green|blue|T10|T11|T13|T14|T17|T18|T19)$/;
     if ( validator.test(line) ) {
         req.line = line;
         next();
