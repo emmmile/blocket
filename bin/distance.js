@@ -52,7 +52,7 @@ module.exports = {
 
                 // finished
                 winston.info("inserted " + toBeInserted.length + " distances in the DB");
-                callback(null,{});
+                callback(null,toBeInserted);
             })
         });
     }

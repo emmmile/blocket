@@ -29,11 +29,22 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-new CronJob('0 0 */6 * * *', function() {
+new CronJob('0 */15 * * * *', function() {
   var blocket = require('./blocket');
-  var distance = require('./distance');
+  var mailer = require('./mailer');
 
   blocket.scrapeAndDistance(function(err,res){
+    for ( i in res ) {
+      // TODO it better
+      if ( res[i].distance.straight < 1 && res[i].from.price < 12000 ) {
+        mailer.sendMessage(
+          res[i].from.title, 
+          res[i].from, 
+          "emilio.deltessa@gmail.com", 
+          function(err,res){}
+        );
+      }
+    }
   });
 }, null, true, 'Europe/Rome');
 new CronJob('0 0 */20 * * *', function() {
