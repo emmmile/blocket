@@ -96,8 +96,6 @@ function onListening() {
 
 new CronJob('0 */1 * * * *', function() {
   var blocket = require('./blocket');
-  var mailer = require('./mailer');
-
   blocket.scrapeAndDistance(sendNotification);
 }, null, true, 'Europe/Rome');
 
@@ -113,7 +111,9 @@ function sendNotification(err, res){
     throw err;
   }
 
-  winston.info(res);
+  console.log(res);
+
+  var mailer = require('./mailer');
 
   for ( i in res ) {
     // TODO it better
