@@ -21,7 +21,7 @@ module.exports = {
             from: 'Blocket.se ' + '<' + config.email.address + '>', // sender address
             to: address, // list of receivers
             subject: subject, // Subject line
-            text: JSON.stringify(body), // plaintext body
+            html: module.exports.createBody(body), // plaintext body
         };
 
         // send mail with defined transport object
@@ -34,5 +34,20 @@ module.exports = {
                 callback(null,info);
             }
         });
+    },
+    createBody: function(body) {
+        var html = '<div><a href="'+ body.uri +'"><h3>'+ body.title +'</h3></a>';
+
+        if ( body.image ) {
+            html += '<br><img src="'+ body.image + '">';
+        }
+
+        if ( body.price ) {
+            html += '<br><p>'+ body.price + ' SEK/month</p>';
+        }
+        
+        html += '</div>';
+
+        return html;
     }
 }
