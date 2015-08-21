@@ -29,28 +29,6 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-new CronJob('0 */5 * * * *', function() {
-  var blocket = require('./blocket');
-  var mailer = require('./mailer');
-
-  blocket.scrapeAndDistance(function(err,res){
-    for ( i in res ) {
-      // TODO it better
-      if ( res[i].distance.straight < 1 && res[i].from.price < 12000 ) {
-        mailer.sendMessage(
-          res[i].from.title, 
-          res[i].from, 
-          "emilio.deltessa@gmail.com", 
-          function(err,res){}
-        );
-      }
-    }
-  });
-}, null, true, 'Europe/Rome');
-new CronJob('0 0 */20 * * *', function() {
-  var db = require('./db');
-  db.clean(function(err, res){});
-}, null, true, 'Europe/Rome');
 
 
 /**
@@ -111,4 +89,41 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+}
+
+
+
+
+new CronJob('0 */5 * * * *', function() {
+  var blocket = require('./blocket');
+  var mailer = require('./mailer');
+
+  blocket.scrapeAndDistance(sendNotification);
+}, null, true, 'Europe/Rome');
+
+
+new CronJob('0 0 */20 * * *', function() {
+  var db = require('./db');
+  db.clean(function(err, res){});
+}, null, true, 'Europe/Rome');
+
+
+function sendNotification(err, res){
+  if (err) {
+    throw err;
+  }
+
+  winston.info(res);
+
+  for ( i in res ) {
+    // TODO it better
+    if ( res[i].distance.straight < 1 && res[i].from.price < 12000 ) {
+      mailer.sendMessage(
+        res[i].from.title, 
+        res[i].from, 
+        "emilio.deltessa@gmail.com", 
+        function(err,res){}
+      );
+    }
+  }
 }

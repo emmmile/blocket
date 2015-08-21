@@ -1,5 +1,6 @@
 var nodemailer = require('nodemailer');
-var config = require('../config');
+var config     = require('../config');
+var winston    = require('winston');
 
 // create reusable transporter object using SMTP transport
 var transporter = nodemailer.createTransport({
@@ -30,7 +31,7 @@ module.exports = {
                 console.log(error);
                 callback(error);
             }else{
-                console.log('Message sent: ' + info.response);
+                winston.info('e-mail notification sent.', info.response);
                 callback(null,info);
             }
         });
@@ -45,7 +46,7 @@ module.exports = {
         if ( body.price ) {
             html += '<br><p>'+ body.price + ' SEK/month</p>';
         }
-        
+
         html += '</div>';
 
         return html;
