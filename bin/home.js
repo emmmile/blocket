@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('blocket:server');
 var http = require('http');
+var async = require('async');
 var CronJob = require('cron').CronJob;
 
 /**
@@ -113,14 +114,23 @@ function sendNotification(err, res){
   
   var mailer = require('./mailer');
 
-  for ( i in res ) {
-    // TODO it better
-    if ( res[i].price < 12000 ) {
+  async.eachSeries(res, function(ad, callback){
+    if ( ad.price < 12000 ) {
       mailer.sendMessage(
-        res[i], 
+        ad, 
         "emilio.deltessa@gmail.com", 
-        function(err,res){}
+        function(err,res){
+          if(err) {
+            throw err;
+          }
+
+          callback();
+        }
       );
     }
-  }
+  }, function(err) {
+    if (err) {
+      throw err;
+    }
+  });
 }
