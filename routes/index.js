@@ -48,13 +48,27 @@ router.param('price', function(req, res, next, price) {
     }
 });
 
+// route middleware to validate :days
+router.param('days', function(req, res, next, days) {
+    winston.info('doing days validation on ' + days);
 
-router.get('/blocket/map/:line/:distance/:price', function(req, res, next) {
+    var validator = /^\d+$/;
+    if ( validator.test(days) ) {
+        req.days = days;
+        next();
+    } else {
+        next("invalid days"); 
+    }
+});
+
+
+router.get('/blocket/map/:line/:distance/:price/:days', function(req, res, next) {
     res.render('index', { 
         title: 'Blocket Stockholm',
         lineOrColor: req.params.line,
         distance: req.params.distance,
-        price: req.params.price
+        price: req.params.price,
+        days: req.paroms.days
     });
 });
 
@@ -70,8 +84,8 @@ router.get('/blocket/tunnelbana/:line', function(req, res, next) {
     });
 });
 
-router.get('/blocket/:line/:distance/:price', function(req, res, next) {
-    db.allAdsToDisplay(req.params.line, req.params.distance, req.params.price, function(err, results){
+router.get('/blocket/:line/:distance/:price/:days', function(req, res, next) {
+    db.allAdsToDisplay(req.params.line, req.params.distance, req.params.price, req.params.days, function(err, results){
         res.json(results);
     });
 });

@@ -98,8 +98,9 @@ module.exports = {
             callback(err,results);
         });
     },
-    allAdsToDisplay: function ( lineOrColor, distance, price, callback ) {
-        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) ";
+    allAdsToDisplay: function ( lineOrColor, distance, price, days, callback ) {
+        var startTime = Date().now() - days * 24 * 3600 * 1000;
+        var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) AND n.time > " + startTime + " ";
 
         if ( distance > 0 ) {
             cypher += "AND r.straight <= " + distance + " ";
@@ -122,7 +123,7 @@ module.exports = {
             }
         } else {
             // do not use te constraint to be close to a station
-            cypher = "MATCH (n:Ad) WHERE has(n.latitude) ";
+            cypher = "MATCH (n:Ad) WHERE has(n.latitude) AND n.time > " + startTime + " ";
         }
 
         if ( price > 0 ) {
