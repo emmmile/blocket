@@ -110,9 +110,7 @@ function sendNotification(err, res){
   if (err) {
     throw err;
   }
-
-  console.log(res);
-
+  
   var mailer = require('./mailer');
 
   for ( i in res ) {
