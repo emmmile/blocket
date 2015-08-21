@@ -94,7 +94,7 @@ function onListening() {
 
 
 
-new CronJob('0 */1 * * * *', function() {
+new CronJob('0 */5 * * * *', function() {
   var blocket = require('./blocket');
   blocket.scrapeAndDistance(sendNotification);
 }, null, true, 'Europe/Rome');
