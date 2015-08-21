@@ -117,10 +117,9 @@ function sendNotification(err, res){
 
   for ( i in res ) {
     // TODO it better
-    if ( res[i].distance.straight < 1 && res[i].from.price < 12000 ) {
+    if ( res[i].price < 12000 ) {
       mailer.sendMessage(
-        res[i].from.title, 
-        res[i].from, 
+        res[i], 
         "emilio.deltessa@gmail.com", 
         function(err,res){}
       );

@@ -16,13 +16,13 @@ var transporter = nodemailer.createTransport({
 
 
 module.exports = {
-    sendMessage: function(subject, body, address, callback) {
+    sendMessage: function(ad, address, callback) {
         // setup e-mail data with unicode symbols
         var mailOptions = {
             from: 'Blocket.se ' + '<' + config.email.address + '>', // sender address
             to: address, // list of receivers
-            subject: subject, // Subject line
-            html: module.exports.createBody(body), // plaintext body
+            subject: ad.title, // Subject line
+            html: module.exports.createBody(ad), // plaintext body
         };
 
         // send mail with defined transport object
@@ -36,15 +36,15 @@ module.exports = {
             }
         });
     },
-    createBody: function(body) {
-        var html = '<div><a href="'+ body.uri +'"><h3>'+ body.title +'</h3></a>';
+    createBody: function(ad) {
+        var html = '<div><a href="'+ ad.uri +'"><h3>'+ ad.title +'</h3></a>';
 
-        if ( body.image ) {
-            html += '<br><img src="'+ body.image + '">';
+        if ( ad.image ) {
+            html += '<br><img src="'+ ad.image + '">';
         }
 
-        if ( body.price ) {
-            html += '<br><p>'+ body.price + ' SEK/month</p>';
+        if ( ad.price ) {
+            html += '<br><p>'+ ad.price + ' SEK/month</p>';
         }
 
         html += '</div>';
