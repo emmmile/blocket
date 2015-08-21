@@ -68,7 +68,7 @@ router.get('/blocket/map/:line/:distance/:price/:days', function(req, res, next)
         lineOrColor: req.params.line,
         distance: req.params.distance,
         price: req.params.price,
-        days: req.paroms.days
+        days: req.params.days
     });
 });
 
