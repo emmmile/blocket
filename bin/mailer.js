@@ -21,7 +21,7 @@ module.exports = {
             from: 'Blocket.se ' + '<' + config.email.address + '>', // sender address
             to: address, // list of receivers
             subject: subject, // Subject line
-            text: body, // plaintext body
+            text: JSON.stringify(body), // plaintext body
         };
 
         // send mail with defined transport object
