@@ -22,15 +22,15 @@ module.exports = {
 
         db.allStations(function(err, stations){
             var toBeInserted = [];
-            var georeferencedAds = [];
+            var toBeNotified = [];
 
             for ( i in ads ) {
                 // continue only on the georeferenced ads
                 if ( !('latitude' in ads[i]) ) {
                     continue;
-                } else {
-                    georeferencedAds.push(ads[i]);
                 }
+
+                var shorterDistance = Infinity;
 
                 for ( j in stations ) {
                     //console.log(stations[j]);
@@ -44,7 +44,15 @@ module.exports = {
                             distance: {straight: d},
                             to: stations[j]
                         });
+                        if ( d < shorterDistance ) {
+                            shorterDistance = d;
+                        }
                     }
+                }
+
+                if ( shorterDistance != Infinity ) {
+                    ads[i].shorterDistance = shorterDistance;
+                    toBeNotified.push(ads[i]); 
                 }
             }
 
@@ -55,7 +63,7 @@ module.exports = {
 
                 // finished
                 winston.info("inserted " + toBeInserted.length + " distances in the DB");
-                callback(null,georeferencedAds);
+                callback(null,toBeNotified);
             })
         });
     }
