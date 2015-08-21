@@ -1,6 +1,7 @@
 var nodemailer = require('nodemailer');
 var config     = require('../config');
 var winston    = require('winston');
+var async      = require('async');
 
 // create reusable transporter object using SMTP transport
 var transporter = nodemailer.createTransport({
@@ -16,7 +17,32 @@ var transporter = nodemailer.createTransport({
 
 
 module.exports = {
-    sendMessage: function(ad, address, callback) {
+    sendNotifications: function (err, res) {
+        if (err) {
+            throw err;
+        }
+
+        var mailer = require('./mailer');
+
+        async.eachSeries(res, function(ad, callback){
+            if ( ad.price < config.notification.email.price ) {
+                mailer.sendNotification(ad, config.notification.address, function(err,res){
+                    if (err) {
+                        throw err;
+                    }
+
+                    callback();
+                });
+            }
+        }, function(err) {
+            if (err) {
+                throw err;
+            }
+
+            winston.info("sent " + res.length + " e-mail notifications" );
+        });
+    },
+    sendNotification: function(ad, address, callback) {
         // setup e-mail data with unicode symbols
         var mailOptions = {
             from: 'Blocket.se ' + '<' + config.email.address + '>', // sender address
@@ -31,7 +57,7 @@ module.exports = {
                 console.log(error);
                 callback(error);
             }else{
-                winston.info('e-mail notification sent.', info.response);
+                winston.info('sent e-mail notification', info.response);
                 callback(null,info);
             }
         });

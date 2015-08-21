@@ -97,7 +97,8 @@ function onListening() {
 
 new CronJob('0 */5 * * * *', function() {
   var blocket = require('./blocket');
-  blocket.scrapeAndDistance(sendNotification);
+  var mailer = require('./mailer');
+  blocket.scrapeAndDistance(mailer.sendNotifications);
 }, null, true, 'Europe/Rome');
 
 
@@ -107,30 +108,3 @@ new CronJob('0 0 */20 * * *', function() {
 }, null, true, 'Europe/Rome');
 
 
-function sendNotification(err, res){
-  if (err) {
-    throw err;
-  }
-  
-  var mailer = require('./mailer');
-
-  async.eachSeries(res, function(ad, callback){
-    if ( ad.price < 12000 ) {
-      mailer.sendMessage(
-        ad, 
-        "emilio.deltessa@gmail.com", 
-        function(err,res){
-          if(err) {
-            throw err;
-          }
-
-          callback();
-        }
-      );
-    }
-  }, function(err) {
-    if (err) {
-      throw err;
-    }
-  });
-}
