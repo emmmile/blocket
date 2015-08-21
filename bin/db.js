@@ -99,7 +99,7 @@ module.exports = {
         });
     },
     allAdsToDisplay: function ( lineOrColor, distance, price, days, callback ) {
-        var startTime = Date().now() - days * 24 * 3600 * 1000;
+        var startTime = Date.now() - days * 24 * 3600 * 1000;
         var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) AND n.time > " + startTime + " ";
 
         if ( distance > 0 ) {
