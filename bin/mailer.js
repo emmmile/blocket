@@ -15,7 +15,7 @@ var transporter = nodemailer.createTransport({
 
 
 module.exports = {
-    sendMessage = function(subject, body, address, callback) {
+    sendMessage: function(subject, body, address, callback) {
         // setup e-mail data with unicode symbols
         var mailOptions = {
             from: 'Blocket.se ' + '<' + config.email.address + '>', // sender address
