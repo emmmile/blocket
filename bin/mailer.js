@@ -14,7 +14,7 @@ var transporter = nodemailer.createTransport({
 // the same transporter object for all e-mails
 
 
-module.exports {
+module.exports = {
     sendMessage = function(subject, body, address, callback) {
         // setup e-mail data with unicode symbols
         var mailOptions = {
