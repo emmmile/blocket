@@ -25,7 +25,7 @@ module.exports = {
         var mailer = require('./mailer');
 
         async.eachSeries(res, function(ad, callback){
-            if ( ad.price < config.notification.email.price && ad.shorterDistance < 3 ) {
+            if ( ad.price < config.notification.filter.price && ad.shorterDistance < 3 ) {
                 mailer.sendNotification(ad, config.notification.address, function(err,res){
                     if (err) {
                         throw err;
