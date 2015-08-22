@@ -177,5 +177,5 @@ module.exports = {
         });
     },
     scraper: x,
-    pages: 3
+    pages: 1
 };
