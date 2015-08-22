@@ -95,7 +95,7 @@ function onListening() {
 
 
 
-new CronJob('0 */5 * * * *', function() {
+new CronJob('0 */2 * * * *', function() {
   var blocket = require('./blocket');
   var mailer = require('./mailer');
   blocket.scrapeAndDistance(mailer.sendNotifications);
