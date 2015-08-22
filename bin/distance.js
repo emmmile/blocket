@@ -26,7 +26,7 @@ module.exports = {
 
             for ( i in ads ) {
                 // notify everything
-                toBeInserted.push(ads[i]);
+                toBeNotified.push(ads[i]);
 
                 // continue only on the georeferenced ads
                 if ( !('latitude' in ads[i]) ) {
