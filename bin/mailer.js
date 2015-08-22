@@ -65,6 +65,10 @@ module.exports = {
     createBody: function(ad) {
         var html = '<div><a href="'+ ad.uri +'"><h3>'+ ad.title +'</h3></a>';
 
+        if ( ad.area ) {
+            html += '<br><h5>'+ ad.area + '</h5>';
+        }
+
         if ( ad.image ) {
             html += '<br><img src="'+ ad.image + '">';
         }
