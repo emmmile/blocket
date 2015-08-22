@@ -25,6 +25,9 @@ module.exports = {
             var toBeNotified = [];
 
             for ( i in ads ) {
+                // notify everything
+                toBeInserted.push(ads[i]);
+
                 // continue only on the georeferenced ads
                 if ( !('latitude' in ads[i]) ) {
                     continue;
@@ -50,10 +53,11 @@ module.exports = {
                     }
                 }
 
-                if ( shorterDistance != Infinity ) {
-                    ads[i].shorterDistance = shorterDistance;
-                    toBeNotified.push(ads[i]); 
-                }
+                // if you want to notify only the the ones with some distance etc..
+                // if ( shorterDistance != Infinity ) {
+                //     ads[i].shorterDistance = shorterDistance;
+                //     toBeNotified.push(ads[i]); 
+                // }
             }
 
             async.eachSeries(toBeInserted, db.insertDistance, function(err){
