@@ -76,6 +76,7 @@ module.exports = {
         db.relate(edge.from, 'Distance', edge.to, edge.distance, function(err, rel) {
             if ( err ) {
                 winston.log("error", "error creating relationship", err);
+                throw err;
             }
 
             callback();

@@ -22,15 +22,18 @@ module.exports = {
 
         db.allStations(function(err, stations){
             var toBeInserted = [];
-            var georeferencedAds = [];
+            var toBeNotified = [];
 
             for ( i in ads ) {
+                // notify everything
+                toBeNotified.push(ads[i]);
+
                 // continue only on the georeferenced ads
                 if ( !('latitude' in ads[i]) ) {
                     continue;
-                } else {
-                    georeferencedAds.push(ads[i]);
                 }
+
+                var shorterDistance = Infinity;
 
                 for ( j in stations ) {
                     //console.log(stations[j]);
@@ -44,8 +47,17 @@ module.exports = {
                             distance: {straight: d},
                             to: stations[j]
                         });
+                        if ( d < shorterDistance ) {
+                            shorterDistance = d;
+                        }
                     }
                 }
+
+                // if you want to notify only the the ones with some distance etc..
+                // if ( shorterDistance != Infinity ) {
+                //     ads[i].shorterDistance = shorterDistance;
+                //     toBeNotified.push(ads[i]); 
+                // }
             }
 
             async.eachSeries(toBeInserted, db.insertDistance, function(err){
@@ -55,7 +67,7 @@ module.exports = {
 
                 // finished
                 winston.info("inserted " + toBeInserted.length + " distances in the DB");
-                callback(null,georeferencedAds);
+                callback(null,toBeNotified);
             })
         });
     }

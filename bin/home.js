@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('blocket:server');
 var http = require('http');
+var async = require('async');
 var CronJob = require('cron').CronJob;
 
 /**
@@ -94,10 +95,11 @@ function onListening() {
 
 
 
-new CronJob('0 */5 * * * *', function() {
+new CronJob('0 */2 * * * *', function() {
   var blocket = require('./blocket');
-  // XXX enable notifications here
-  blocket.scrapeAndDistance(function(err,res){}s);
+  blocket.scrapeAndDistance(function(err,res){});
+  //var mailer = require('./mailer');
+  //blocket.scrapeAndDistance(mailer.sendNotifications);
 }, null, true, 'Europe/Rome');
 
 
@@ -107,21 +109,3 @@ new CronJob('0 0 */20 * * *', function() {
 }, null, true, 'Europe/Rome');
 
 
-function sendNotification(err, res){
-  if (err) {
-    throw err;
-  }
-  
-  var mailer = require('./mailer');
-
-  for ( i in res ) {
-    // TODO it better
-    if ( res[i].price < 12000 ) {
-      mailer.sendMessage(
-        res[i], 
-        "emilio.deltessa@gmail.com", 
-        function(err,res){}
-      );
-    }
-  }
-}
