@@ -96,7 +96,8 @@ function onListening() {
 
 new CronJob('0 */5 * * * *', function() {
   var blocket = require('./blocket');
-  blocket.scrapeAndDistance(sendNotification);
+  // XXX enable notifications here
+  blocket.scrapeAndDistance(function(err,res){}s);
 }, null, true, 'Europe/Rome');
 
 
