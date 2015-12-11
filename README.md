@@ -1,4 +1,4 @@
-# Blocket scraper
+# Blocket scraper [![Build Status](https://travis-ci.org/emmmile/blocket.svg?branch=master)](https://travis-ci.org/emmmile/blocket)
 
 This application downloads all rent ads for Stockholm from Blocket.se, and shows them on a map.
 It is written as a node.js REST application and uses a Neo4j database for storing all the information.
