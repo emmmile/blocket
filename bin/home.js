@@ -104,8 +104,10 @@ function onListening() {
 if ( argv["initialize"] == true ) {
   async.series([
       function(callback) {
-        winston.info("downloading tunnelbana stations for the first time");
-        tunnelbana.downloadStationsFromCategory("Stockholm_metro_stations", [], db.insertStation, callback);
+        db.allStations( function(err, currentStations) {
+          winston.info("downloading tunnelbana stations for the first time");
+          tunnelbana.downloadStationsFromCategory("Stockholm_metro_stations", currentStations, db.insertStation, callback);
+        });
       },
       function(callback) {
         winston.info("scraping whole blocket");
