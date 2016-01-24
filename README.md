@@ -6,7 +6,7 @@ It is written as a node.js REST application and uses a Neo4j database for storin
 To run it, simply clone the repository and type:
 ```
 npm install
-npm start
+npm start -- --initialize
 ```
 
 In this way the application is listening on [http://127.0.0.1:3000](http://127.0.0.1:3000) and views something like this:
