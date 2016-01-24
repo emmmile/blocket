@@ -110,6 +110,10 @@ if ( argv["initialize"] == true ) {
         });
       },
       function(callback) {
+        winston.info("cleaning old ads");
+        db.clean(callback);
+      },
+      function(callback) {
         winston.info("scraping whole blocket");
         blocket.scrapeAndDistance(50, callback);
       }
