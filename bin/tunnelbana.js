@@ -81,7 +81,7 @@ function downloadStations (pages, alreadyInserted, saveStation) {
 }
 
 
-function downloadStationsFromCategory (category, alreadyInserted, saveStation) {
+function downloadStationsFromCategory (category, alreadyInserted, saveStation, callback) {
     client.getPagesInCategory(category, function (err, pages) {
         if (err) {
             //console.error(err);
@@ -89,6 +89,7 @@ function downloadStationsFromCategory (category, alreadyInserted, saveStation) {
             return;
         }
         downloadStations(pages, alreadyInserted, saveStation);
+        callback();
     });
 }
 

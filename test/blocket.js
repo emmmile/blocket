@@ -185,6 +185,7 @@ describe('blocket whole index scraping', function () {
     var ads = getSampleAds();
     var adsDB = getSampleAdsDB();
     var originalScraper = blocket.scraper;
+    var pagesToScrape = 3;
 
     beforeEach(function(done){
         // mocking successive calls to the scraper
@@ -193,7 +194,7 @@ describe('blocket whole index scraping', function () {
         // calling the scraper the first time will get you some ads
         stub.onCall(0).returns(getIndexCallback(ads));
         // mock the other calls for the index
-        for ( var i = 1; i < blocket.pages; ++i ) {
+        for ( var i = 1; i < pagesToScrape; ++i ) {
            stub.onCall(i).returns(getIndexCallback([]));
         }
 
@@ -214,7 +215,7 @@ describe('blocket whole index scraping', function () {
 
     it('should not throw and insert partially', function(){
         (function(){
-            blocket.scrape(function(err, scraped){
+            blocket.scrape(pagesToScrape, function(err, scraped){
                 scraped.length.should.equal(2);
                 scraped[0].should.have.property(uri, "one");
                 scraped[0].should.have.property(description, "one description");

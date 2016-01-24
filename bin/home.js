@@ -5,10 +5,16 @@
  */
 
 var app = require('../app');
+var blocket = require('./blocket');
 var debug = require('debug')('blocket:server');
 var http = require('http');
 var async = require('async');
+var winston = require('winston');
+var db = require('./db');
+var tunnelbana = require('./tunnelbana');
+var argv = require('minimist')(process.argv.slice(2));
 var CronJob = require('cron').CronJob;
+
 
 /**
  * Get port from environment and store in Express.
@@ -92,12 +98,30 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+/**
+ * First time initialization.
+ */
+if ( argv["initialize"] == true ) {
+  async.series([
+      function(callback) {
+        winston.info("downloading tunnelbana stations for the first time");
+        tunnelbana.downloadStationsFromCategory("Stockholm_metro_stations", [], db.insertStation, callback);
+      },
+      function(callback) {
+        winston.info("scraping whole blocket");
+        blocket.scrapeAndDistance(50, callback);
+      }
+  ], function(err, results){
+      winston.info("finished.");
+  });
+}
 
-
-
+/**
+ * Jobs that are run periodically.
+ */
 new CronJob('0 */10 * * * *', function() {
   var blocket = require('./blocket');
-  blocket.scrapeAndDistance(function(err,res){});
+  blocket.scrapeAndDistance(3, function(err,res){});
   //var mailer = require('./mailer');
   //blocket.scrapeAndDistance(mailer.sendNotifications);
 }, null, true, 'Europe/Rome');

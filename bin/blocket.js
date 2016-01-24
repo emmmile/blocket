@@ -3,7 +3,7 @@
  */
 
 
-var winston = require('winston');
+var winston  = require('winston');
 var ent      = require('ent');
 var db       = require('./db');
 var Xray     = require('x-ray');
@@ -118,9 +118,9 @@ module.exports = {
     },
     // scrape the index page of Blocket /bostad/uthyres/
     // extracting partial information about each ad
-    scrapeIndex: function(callback) {
+    scrapeIndex: function(pagesToScrape, callback) {
         pages = [];
-        for ( var i = 1; i <= module.exports.pages; ++i ) {
+        for ( var i = 1; i <= pagesToScrape; ++i ) {
             pages.push(i);
         }
 
@@ -140,8 +140,8 @@ module.exports = {
             callback(null, ads);
         });
     },
-    scrape: function(callback) {
-        module.exports.scrapeIndex(function (err, ads) {
+    scrape: function(pagesToScrape, callback) {
+        module.exports.scrapeIndex(pagesToScrape, function (err, ads) {
             if (err) {
                 winston.error(err);
                 throw err;
@@ -167,8 +167,8 @@ module.exports = {
             });
         })
     },
-    scrapeAndDistance: function(callback) {
-        module.exports.scrape(function(err, ads){
+    scrapeAndDistance: function(pagesToScrape, callback) {
+        module.exports.scrape(pagesToScrape, function(err, ads){
             google.geocode(ads, function(err, updatedAds){
                 db.insertAds(updatedAds, function(err, insertedAds){
                     distance.computeDistances(insertedAds, callback);
@@ -176,6 +176,5 @@ module.exports = {
             });
         });
     },
-    scraper: x,
-    pages: 10
+    scraper: x
 };
