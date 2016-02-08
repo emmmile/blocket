@@ -131,7 +131,7 @@ module.exports = {
             cypher += "AND n.price <= " + price + " ";
         }
 
-        cypher += "RETURN n";
+        cypher += "RETURN DISTINCT n";
         winston.info(cypher);
 
         db.query(cypher, function(err, results) {
