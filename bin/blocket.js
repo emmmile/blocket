@@ -173,7 +173,7 @@ module.exports = {
                 db.insertAds(updatedAds, function(err, insertedAds){
                     distance.computeDistances(insertedAds, function(err, allads) {
                         db.getImportantLocations(function(err, importants){
-                            distance.distanceFromImportant(allads, importants, callback);
+                            distance.distanceFromImportant(insertedAds, importants, callback);
                         });
                     });
                 });
