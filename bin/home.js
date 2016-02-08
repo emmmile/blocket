@@ -119,7 +119,7 @@ if ( argv["initialize"] == true ) {
       },
       function(callback) {
         winston.info("scraping whole blocket");
-        blocket.scrapeAndDistance(50, callback);
+        blocket.scrapeAndDistance(20, callback);
       }
   ], function(err, results){
       winston.info("finished.");
@@ -129,7 +129,7 @@ if ( argv["initialize"] == true ) {
 /**
  * Jobs that are run periodically.
  */
-new CronJob('0 */10 * * * *', function() {
+new CronJob('0 */30 * * * *', function() {
   var blocket = require('./blocket');
   blocket.scrapeAndDistance(3, function(err,res){});
   //var mailer = require('./mailer');

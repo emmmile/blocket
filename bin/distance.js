@@ -100,7 +100,7 @@ module.exports = {
                     //winston.info('comuputed distance from important location ' + important.name);
 
                     if ( res.routes.length != 0 ) {
-                        d = res.routes[0].legs[0].duration.value; // in seconds
+                        d = res.routes[0].legs[0].duration.value / 60; // in minutes
 
                         toBeInserted.push({
                             label: 'Duration',

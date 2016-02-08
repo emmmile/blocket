@@ -53,6 +53,32 @@ function setMarkers(map, locations, key, markerIcon) {
     }
 }
 
+// function initialize() {
+//     var stockholm = new google.maps.LatLng(59.325965, 18.067056);
+//     var mapOptions = {
+//         zoom: 12,
+//         center: stockholm
+//     };
+//     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+
+//     $.getJSON('/blocket/'+ lineOrColor +"/"+ distance + "/" + price + "/" + days, function(ads) {
+//         setMarkers(map, ads, 'title', yellowMarker);
+
+
+
+//         $.getJSON('/blocket/tunnelbana/blue/', function(tunnelbanaStations) {
+//             setMarkers(map, tunnelbanaStations, 'name', blueMarker);
+//         });
+//         $.getJSON('/blocket/tunnelbana/green/', function(tunnelbanaStations) {
+//             setMarkers(map, tunnelbanaStations, 'name', greenMarker);
+//         });
+//         $.getJSON('/blocket/tunnelbana/red/', function(tunnelbanaStations) {
+//             setMarkers(map, tunnelbanaStations, 'name', redMarker);
+//         });
+//     });
+// }
+
 function initialize() {
     var stockholm = new google.maps.LatLng(59.325965, 18.067056);
     var mapOptions = {
@@ -62,7 +88,7 @@ function initialize() {
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 
-    $.getJSON('/blocket/'+ lineOrColor +"/"+ distance + "/" + price + "/" + days, function(ads) {
+    $.getJSON('/blocket/'+ duration + "/" + price, function(ads) {
         setMarkers(map, ads, 'title', yellowMarker);
 
 
@@ -78,6 +104,7 @@ function initialize() {
         });
     });
 }
+
 
 
 google.maps.event.addDomListener(window, 'load', initialize);

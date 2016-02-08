@@ -110,6 +110,27 @@ module.exports = {
             callback(err,results);
         });
     },
+    display: function( duration, price, callback ) {
+        var cypher = "MATCH (n:Ad)-[r:Duration]-(s:Important) WHERE has(n.latitude) ";
+
+        if ( duration > 0 ) {
+            cypher += "AND r.transit <= " + duration + " ";
+        } else {
+            // do not use te constraint to be close to a station
+            cypher = "MATCH (n:Ad) WHERE has(n.latitude) ";
+        }
+
+        if ( price > 0 ) {
+            cypher += "AND n.price <= " + price + " ";
+        }
+
+        cypher += "RETURN DISTINCT n";
+        winston.info(cypher);
+
+        db.query(cypher, function(err, results) {
+            callback(err,results);
+        });
+    },
     allAdsToDisplay: function ( lineOrColor, distance, price, days, callback ) {
         var startTime = (days != 0) ? (Date.now() - days * 24 * 3600 * 1000) : 0;
         var cypher = "MATCH (n:Ad)-[r:Distance]-(s:Station) WHERE has(n.latitude) AND n.time > " + startTime + " ";
