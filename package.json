@@ -17,6 +17,7 @@
     "ent": "~2.2.0",
     "express": "^4.13.4",
     "geolib": "2.0.17",
+    "googlemaps": "^1.2.0",
     "hbs": "^4.0.0",
     "html-entities": "^1.1.2",
     "minimist": "^1.2.0",

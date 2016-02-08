@@ -171,7 +171,11 @@ module.exports = {
         module.exports.scrape(pagesToScrape, function(err, ads){
             google.geocode(ads, function(err, updatedAds){
                 db.insertAds(updatedAds, function(err, insertedAds){
-                    distance.computeDistances(insertedAds, callback);
+                    distance.computeDistances(insertedAds, function(err, allads) {
+                        db.getImportantLocations(function(err, importants){
+                            distance.distanceFromImportant(allads, importants, callback);
+                        });
+                    });
                 });
             });
         });

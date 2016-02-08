@@ -20,6 +20,17 @@ lines = {
 };
 
 module.exports = {
+    insertImportantLocation: function ( data, callback ) {
+        // data can be any object
+        db.save(data, 'Important', function(err, node) {
+            if (err) throw err;
+
+            callback(err, node);
+        });
+    },
+    getImportantLocations: function ( callback ) {
+        db.nodesWithLabel('Important', callback);
+    },
     insertStation: function ( data ) {
         // data can be any object
         db.save(data, 'Station', function(err, node) {
@@ -72,14 +83,14 @@ module.exports = {
             callback(null,inserted);
         })
     },
-    insertDistance: function (edge, callback) {
-        db.relate(edge.from, 'Distance', edge.to, edge.distance, function(err, rel) {
+    insertRelation: function (edge, callback) {
+        db.relate(edge.from, edge.label, edge.to, edge.relation, function(err, rel) {
             if ( err ) {
                 winston.log("error", "error creating relationship", err);
                 throw err;
             }
 
-            callback();
+            callback(null); //success
         });
     },
     allAds: function ( callback ) {

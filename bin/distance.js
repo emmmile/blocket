@@ -4,6 +4,18 @@
 
 var winston = require('winston');
 var async   = require('async');
+var config  = require('../config');
+var db      = require('./db');
+var GoogleMapsAPI = require('googlemaps');
+
+var publicConfig = {
+  key: config.google.key,
+  stagger_time:       1000, // for elevationPath
+  encode_polylines:   false,
+  secure:             true, // use https
+};
+var gmAPI = new GoogleMapsAPI(publicConfig);
+
 
 module.exports = {
     toRadians: function(angle) {
@@ -18,16 +30,10 @@ module.exports = {
         return Math.sqrt(x*x + y*y) * 6371.0;
     },
     computeDistances: function(ads, callback) {
-        var db = require('./db');
-
         db.allStations(function(err, stations){
             var toBeInserted = [];
-            var toBeNotified = [];
 
             for ( i in ads ) {
-                // notify everything
-                toBeNotified.push(ads[i]);
-
                 // continue only on the georeferenced ads
                 if ( !('latitude' in ads[i]) ) {
                     continue;
@@ -43,8 +49,9 @@ module.exports = {
                     var d = module.exports.distance(ad, station);
                     if ( d < 3 ) {
                         toBeInserted.push({
+                            label: 'Distance',
                             from: ads[i],
-                            distance: {straight: d},
+                            relation: {straight: d},
                             to: stations[j]
                         });
                         if ( d < shorterDistance ) {
@@ -52,22 +59,83 @@ module.exports = {
                         }
                     }
                 }
-
-                // if you want to notify only the the ones with some distance etc..
-                // if ( shorterDistance != Infinity ) {
-                //     ads[i].shorterDistance = shorterDistance;
-                //     toBeNotified.push(ads[i]); 
-                // }
             }
 
-            async.eachSeries(toBeInserted, db.insertDistance, function(err){
+            async.eachSeries(toBeInserted, db.insertRelation, function(err){
                 if (err) {
                     throw err;
                 }
 
                 // finished
-                winston.info("inserted " + toBeInserted.length + " distances in the DB");
-                callback(null,toBeNotified);
+                winston.info("inserted " + toBeInserted.length + " relations in the DB");
+                callback(null,ads);
+            })
+        });
+    },
+    distanceFromImportant: function (ads, importants, mainCallback) {
+        var toBeInserted = [];
+
+        // process only the ones that are geocoded
+        adsToProcess = ads.filter(function(ad){
+            return ('latitude' in ad) && ('longitude' in ad);
+        });
+
+        async.eachSeries(importants, function(important, importantCallback) {
+            // for each one of them..
+            async.eachSeries(adsToProcess, function(ad, adCallback) {
+                // compute the distance from the important
+                gmAPI.directions({
+                    origin: ad.latitude + ',' + ad.longitude,
+                    destination: important.latitude + ',' + important.longitude,
+                    mode: 'transit',
+                    departure_time: new Date(2016, 02, 8, 8, 30, 0, 0)
+                }, 
+                // asynchronously
+                function(err, res) {
+                    if (err) {
+                        winston.info(err);
+                        throw err;
+                    }
+
+                    //winston.info('comuputed distance from important location ' + important.name);
+
+                    if ( res.routes.length != 0 ) {
+                        d = res.routes[0].legs[0].duration.value; // in seconds
+
+                        toBeInserted.push({
+                            label: 'Duration',
+                            from: ad,
+                            relation: {transit: d, raw: JSON.stringify(res.routes)},
+                            to: important
+                        });
+                    }
+
+                    setTimeout(function(){
+                        adCallback(null);
+                    }, 250);
+                });
+            }, function(err){
+                if (err) {
+                    throw err;
+                }
+
+                winston.info("computed " + adsToProcess.length + " directions to the important location " + important.name);
+                importantCallback(null);
+            });
+        }, function(err){
+            if (err) {
+                throw err;
+            }
+
+            async.eachSeries(toBeInserted, db.insertRelation, function(err){
+                if (err) {
+                    winston.info(err);
+                    throw err;
+                }
+
+                // finished
+                winston.info("inserted " + toBeInserted.length + " relations in the DB");
+                mainCallback(null, ads);
             })
         });
     }

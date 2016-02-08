@@ -110,6 +110,10 @@ if ( argv["initialize"] == true ) {
         });
       },
       function(callback) {
+        winston.info("insterting office location");
+        db.insertImportantLocation({name: 'Spotify', latitude: 59.342206, longitude: 18.063681}, callback);
+      },
+      function(callback) {
         winston.info("cleaning old ads");
         db.clean(callback);
       },

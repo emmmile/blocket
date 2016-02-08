@@ -6,14 +6,20 @@
 var winston = require('winston');
 var async   = require('async');
 var config  = require('../config');
-var geocoderProvider = 'google';
-var httpAdapter = 'http';
-var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter);
+var GoogleMapsAPI = require('googlemaps');
+
+var publicConfig = {
+  key: config.google.key,
+  stagger_time:       1000, // for elevationPath
+  encode_polylines:   false,
+  secure:             true, // use https
+};
+var gmAPI = new GoogleMapsAPI(publicConfig);
 
 
 module.exports = {
     singleGeocode: function (ad, callback) {
-        geocoder.geocode({address: ad.address, city: 'Stockholm', country: 'Sweden'}, function(err, res) {
+        gmAPI.geocode({'address': ad.address, 'city': 'Stockholm', 'country': 'Sweden'}, function(err, res) {
             if (err) {
                 throw err;
             }
